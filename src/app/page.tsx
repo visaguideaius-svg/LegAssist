@@ -30,9 +30,11 @@ import {
   Loader2,
   ChevronUp,
   Lock,
+  BookOpen,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import PrivacyNoticeDialog from "@/components/privacy-notice-dialog";
+import KnowledgeLibrary from "@/components/knowledge-library";
 
 /* ───────── Types ───────── */
 interface Message {
@@ -124,6 +126,7 @@ export default function LegalChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -277,6 +280,25 @@ export default function LegalChatPage() {
                 </TooltipTrigger>
                 <TooltipContent>
                   {isRTL ? "Switch to English" : "التبديل إلى العربية"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Knowledge library */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowLibrary(true)}
+                    className="h-8 w-8"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isRTL ? "مكتبة المعرفة" : "Knowledge Library"}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -539,6 +561,18 @@ export default function LegalChatPage() {
         open={showPrivacy}
         onOpenChange={setShowPrivacy}
         language={language}
+      />
+
+      {/* Knowledge Library Sheet */}
+      <KnowledgeLibrary
+        open={showLibrary}
+        onOpenChange={setShowLibrary}
+        language={language}
+        onSelectTopic={(topic) => {
+          const query = isRTL ? topic.titleAr : topic.titleEn;
+          sendMessage(query);
+          setShowLibrary(false);
+        }}
       />
     </div>
   );

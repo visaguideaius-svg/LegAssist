@@ -63,3 +63,38 @@ Stage Summary:
 - Bilingual AR/EN — switches content based on active language
 - Scrollable dialog with professional styling matching the legal theme
 - Screenshots: privacy-dialog-ar.png, privacy-dialog-en.png
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Review topic template & seed data SQL, create Prisma schema, seed database, build Knowledge Library UI
+
+Work Log:
+- Reviewed topic_template_employment_termination.json: well-structured template with bilingual fields; found typos (`pp` suffix in 2 user_questions)
+- Reviewed seed_data.sql: comprehensive PostgreSQL seed (8 practice areas, 2 topics, 3 legal sources, 2 lawyers); uses PG-specific syntax needing SQLite conversion
+- Created `/prisma/schema.prisma` — 8 models: PracticeArea, Topic, TopicVersion, LegalSource, TopicLegalSource, Lawyer, UnansweredQuestion, TopicAnalytics
+- Ran `db:push` and `db:generate` — schema synced to SQLite, client generated
+- Created `/scripts/seed.ts` — SQLite-compatible Prisma seed script converting all SQL data
+- Ran seed successfully: 8 practice areas, 2 topics, 3 legal sources, 2 topic versions, 2 lawyers, 1 unanswered question, 2 analytics events
+- Created API routes:
+  - `GET /api/topics` — list all active topics with content JSON
+  - `GET /api/topics/[slug]` — topic detail with legal sources
+  - `GET /api/practice-areas` — list all practice areas with topic counts
+- Created `/src/components/knowledge-library.tsx` — bilingual Knowledge Library Sheet component:
+  - List view: 8 practice areas with topic cards, urgency badges, topic counts
+  - Detail view: full topic content (explanation, key facts, numbered steps, documents, deadlines, lawyer escalation, legal sources, disclaimer)
+  - Back navigation between list and detail
+- Updated `/src/app/page.tsx` — added BookOpen icon button in header, KnowledgeLibrary sheet with onSelectTopic handler
+- ESLint: clean pass
+- Agent browser verification:
+  - Library button visible in header
+  - Sheet opens with 8 practice areas and 2 seeded topics
+  - Topic detail renders all sections (explanation, key facts, steps for both roles, documents, deadlines, lawyer warning, 3 legal sources, disclaimer)
+  - Screenshot captured
+
+Stage Summary:
+- Full knowledge base schema created and seeded in SQLite via Prisma
+- 3 API routes serving practice areas, topics list, and topic detail
+- Knowledge Library side-sheet browsable from the chat header
+- Topic detail shows complete structured legal content from the JSON template
+- Screenshot: knowledge-library-topic-detail.png

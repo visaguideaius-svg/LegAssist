@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +7,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ─── Practice Areas ───────────────────────────────────
+model PracticeArea {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  titleAr     String   @map("title_ar")
+  titleEn     String   @map("title_en")
+  descriptionAr String @map("description_ar")
+  descriptionEn String @map("description_en")
+  topics      Topic[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("practice_areas")
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ─── Topics ──────────────────────────────────────────
+model Topic {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  titleAr        String        @map("title_ar")
+  titleEn        String        @map("title_en")
+  practiceArea   PracticeArea  @relation(fields: [practiceAreaId], references: [id])
+  practiceAreaId String        @map("practice_area_id")
+  audience       String        // JSON array stored as string: ["employee","employer"]
+  jurisdiction   String
+  contentType    String        @map("content_type")
+  urgency        String        // low, medium, high
+  isActive       Boolean       @default(true) @map("is_active")
+  versions       TopicVersion[]
+  legalSources   TopicLegalSource[]
+  analytics      TopicAnalytics[]
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@map("topics")
+}
+
+// ─── Topic Versions (content snapshots) ─────────────
+model TopicVersion {
+  id                String   @id @default(cuid())
+  topicId           String   @map("topic_id")
+  topic             Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  versionNumber     Int      @map("version_number")
+  contentJson       String   @map("content_json") // Full structured JSON content
+  lastReviewedAt    DateTime @map("last_reviewed_at")
+  reviewedByUserId  String?  @map("reviewed_by_user_id")
+  confidenceLevel   String   @map("confidence_level") // high, medium, low
+  isCurrent         Boolean  @default(true) @map("is_current")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("topic_versions")
+}
+
+// ─── Legal Sources ───────────────────────────────────
+model LegalSource {
+  id              String   @id @default(cuid())
+  sourceType      String   @map("source_type") // law, regulation, bylaw, instruction
+  titleAr         String   @map("title_ar")
+  titleEn         String   @map("title_en")
+  referenceNumber String   @map("reference_number")
+  articleNumber   String?  @map("article_number")
+  effectiveDate   DateTime @map("effective_date")
+  sourceUrl       String?  @map("source_url")
+  notes           String?
+  topics          TopicLegalSource[]
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("legal_sources")
+}
+
+// ─── Topic ↔ Legal Source Junction ──────────────────
+model TopicLegalSource {
+  id               String      @id @default(cuid())
+  topicId          String      @map("topic_id")
+  legalSourceId    String      @map("legal_source_id")
+  topic            Topic       @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  legalSource      LegalSource @relation(fields: [legalSourceId], references: [id], onDelete: Cascade)
+  relevanceNoteAr  String?     @map("relevance_note_ar")
+  relevanceNoteEn  String?     @map("relevance_note_en")
+
+  @@map("topic_legal_sources")
+}
+
+// ─── Lawyers ─────────────────────────────────────────
+model Lawyer {
+  id                    String    @id @default(cuid())
+  fullName              String    @map("full_name")
+  barMembershipNumber   String    @unique @map("bar_membership_number")
+  verificationStatus    String    @map("verification_status") // verified, pending, rejected
+  verifiedAt            DateTime? @map("verified_at")
+  practiceAreas         String    // JSON array: ["labor","debt"]
+  governoratesServed    String    @map("governorates_served") // JSON array: ["Amman"]
+  languages             String    // JSON array: ["ar","en"]
+  serviceTypes          String    @map("service_types") // JSON array: ["consultation","litigation"]
+  pricingInfoAr         String    @map("pricing_info_ar")
+  pricingInfoEn         String    @map("pricing_info_en")
+  contactEmail          String    @map("contact_email")
+  contactPhone          String?   @map("contact_phone")
+  profileUrl            String?   @map("profile_url")
+  complaintsPolicyAr    String?   @map("complaints_policy_ar")
+  complaintsPolicyEn    String?   @map("complaints_policy_en")
+  lastUpdatedAt         DateTime  @map("last_updated_at")
+  isActive              Boolean   @default(true) @map("is_active")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("lawyers")
+}
+
+// ─── Unanswered Questions (content gaps) ─────────────
+model UnansweredQuestion {
+  id                  String   @id @default(cuid())
+  userId              String?  @map("user_id")
+  questionTextAr      String   @map("question_text_ar")
+  questionTextEn      String?  @map("question_text_en")
+  practiceAreaGuess   String?  @map("practice_area_guess")
+  relatedTopicId      String?  @map("related_topic_id")
+  isResolved          Boolean  @default(false) @map("is_resolved")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("unanswered_questions")
+}
+
+// ─── Topic Analytics ─────────────────────────────────
+model TopicAnalytics {
+  id          String   @id @default(cuid())
+  topicId     String   @map("topic_id")
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  eventType   String   @map("event_type") // page_view, chat_started, lawyer_clicked
+  userId      String?  @map("user_id")
+  sessionId   String?  @map("session_id")
+  metadataJson String? @map("metadata_json") // JSON string
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("topic_analytics")
 }

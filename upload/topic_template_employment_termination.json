@@ -1,0 +1,100 @@
+{
+  "slug": "employee-termination-jordan",
+  "title_ar": "إنهاء خدمة العامل في الأردن",
+  "title_en": "Employment Termination in Jordan",
+  "practice_area": "labor",
+  "audience": [
+    "employee",
+    "employer"
+  ],
+  "jurisdiction": "Jordan",
+  "content_type": "general_information",
+  "last_reviewed": "2026-08-01",
+  "urgency": "medium",
+  "user_questions": [
+    "تم فصلي من العمل",
+    "هل الفصل تعسفي؟",
+    "ما حقوقي بعد إنهاء العقد؟",
+    "كم مدة الإشعار الواجبةpp",
+    "ما هي مستحقات نهاية الخدمةpp"
+  ],
+  "key_facts": [
+    "نوع العقد (محدد المدة / غير محدد المدة)",
+    "مدة الخدمة",
+    "سبب الإنهاء (من قبل العامل / صاحب العمل)",
+    "تاريخ الإنهاء",
+    "الأجر الأساسي والبدلات",
+    "وجود إشعار مسبق",
+    "وجود مخالفات تأديبية مزعومة"
+  ],
+  "explanation_ar": "إنهاء خدمة العامل في الأردن ينظمه قانون العمل الأردني. تختلف الحقوق حسب نوع العقد، ومدة الخدمة، وسبب الإنهاء، وما إذا تم الالتزام بالإجراءات القانونية. هذه الصفحة تقدم معلومات عامة ولا تحدد حقوقك النهائية في واقعة معينة.",
+  "explanation_en": "Employment termination in Jordan is governed by the Jordan Labor Law. Rights differ depending on the type of contract, length of service, reason for termination, and whether legal procedures were followed. This page provides general information only.",
+  "steps_employee": [
+    "راجع عقد العمل لتحديد نوعه ومدته وشروط الإنهاء.",
+    "تحقق من وجود إشعار مسبق وما إذا تم الالتزام به.",
+    "اجمع مستنداتك: العقد، كشوف الراتب، أي خطابات إنذار أو قرار فصل.",
+    "احسب مستحقاتك التقريبية (أجر فترة الإشعار، نهاية الخدمة، إجازات مستحقة).",
+    "إذا كان الفصل يبدو مخالفًا، استشر محامٍ لتقييم إمكانية رفع شكوى أو دعوى عمالية."
+  ],
+  "steps_employer": [
+    "تحقق من وجود سبب مشروع للإنهاء وفقًا للعقد والقانون.",
+    "التزم بمدة الإشعار الواجبة أو ادفع بدل الإشعار.",
+    "أصدر قرار الفصل خطيًا وبلغة واضحة، مع ذكر التاريخ والأسباب العامة.",
+    "احسب مستحقات العامل النهائية (أجر، إشعار، نهاية خدمة، إجازات).",
+    "احفظ ملفًا كاملًا بالمستندات تحسبًا لأي نزاع مستقبلي."
+  ],
+  "documents_to_keep": [
+    "عقد العمل",
+    "كشوف الراتب",
+    "خطابات الإنذار (إن وُجدت)",
+    "قرار الفصل أو رسالة الإنهاء",
+    "إثباتات دفع المستحقات النهائية"
+  ],
+  "deadlines": [
+    "فترة الإشعار حسب العقد أو القانون (عادة شهر).",
+    "مواعيد دفع المستحقات النهائية بعد الإنهاء.",
+    "المدد القانونية لرفع الدعاوى العمالية (تختلف حسب نوع المطالبة)."
+  ],
+  "competent_authorities_ar": "وزارة العمل (للشكاوى الإدارية الأولية)، ومحاكم العمل المختصة للنزاعات القضائية.",
+  "competent_authorities_en": "Ministry of Labor (for initial administrative complaints) and competent labor courts for judicial disputes.",
+  "when_to_see_lawyer": [
+    "إذا كان الفصل بدون إشعار أو بدون سبب واضح.",
+    "إذا كانت المستحقات كبيرة أو غير مدفوعة.",
+    "إذا كانت هناك مخالفات تأديبية مزعومة قد تؤثر على سمعتك أو مستقبلك الوظيفي.",
+    "إذا كنت تخطط لرفع دعوى عمالية أو الدفاع عن دعوى ضدك."
+  ],
+  "legal_sources": [
+    {
+      "source_type": "law",
+      "title_ar": "قانون العمل الأردني",
+      "title_en": "Jordan Labor Law",
+      "reference_number": "Law No. 8 of 1996",
+      "article_number": "Article 27",
+      "effective_date": "1996-01-01",
+      "source_url": "https://www.moj.gov.jo",
+      "notes": "General provisions on termination of employment contracts."
+    },
+    {
+      "source_type": "law",
+      "title_ar": "قانون العمل الأردني",
+      "title_en": "Jordan Labor Law",
+      "reference_number": "Law No. 8 of 1996",
+      "article_number": "Article 28",
+      "effective_date": "1996-01-01",
+      "source_url": "https://www.moj.gov.jo",
+      "notes": "Notice period and related obligations."
+    },
+    {
+      "source_type": "law",
+      "title_ar": "قانون العمل الأردني",
+      "title_en": "Jordan Labor Law",
+      "reference_number": "Law No. 8 of 1996",
+      "article_number": "Article 31",
+      "effective_date": "1996-01-01",
+      "source_url": "https://www.moj.gov.jo",
+      "notes": "End-of-service gratuity and related entitlements."
+    }
+  ],
+  "disclaimer_ar": "هذه معلومات قانونية عامة وليست استشارة قانونية. للتقييم النهائي لحالتك، يُنصح بمراجعة محامٍ مرخّص.",
+  "disclaimer_en": "This is general legal information, not legal advice. For a final assessment of your situation, consult a licensed lawyer."
+}
