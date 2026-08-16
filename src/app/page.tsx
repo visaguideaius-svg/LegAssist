@@ -31,6 +31,7 @@ import {
   ChevronUp,
   Lock,
   BookOpen,
+  ImageIcon,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import PrivacyNoticeDialog from "@/components/privacy-notice-dialog";
@@ -42,6 +43,9 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  visualizing?: boolean;
+  visualizationId?: string;
+  visualizationError?: boolean;
 }
 
 interface TopicButton {
@@ -240,6 +244,55 @@ export default function LegalChatPage() {
     const query = isRTL ? topic.queryAr : topic.queryEn;
     sendMessage(query);
   };
+
+  /* ── Visualize handler ── */
+  const handleVisualize = useCallback(
+    async (msgId: string, answerText: string) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === msgId ? { ...m, visualizing: true, visualizationError: false } : m
+        )
+      );
+
+      try {
+        const res = await fetch("/api/visualizations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            answerId: msgId,
+            answerText,
+            language,
+          }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Visualization failed");
+        }
+
+        const data = await res.json();
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === msgId
+              ? { ...m, visualizing: false, visualizationId: data.id }
+              : m
+          )
+        );
+
+        // Navigate to preview
+        window.location.href = `/visualizations/${data.id}`;
+      } catch (error) {
+        console.error("Visualization error:", error);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === msgId ? { ...m, visualizing: false, visualizationError: true } : m
+          )
+        );
+      }
+    },
+    [language]
+  );
 
   /* ── Render ── */
   return (
@@ -454,6 +507,40 @@ export default function LegalChatPage() {
                     minute: "2-digit",
                   })}
                 </p>
+
+                {/* ── Visualize Answer Button ── */}
+                {msg.role === "assistant" && (
+                  <div className="mt-3 pt-2 border-t border-border/30">
+                    <button
+                      type="button"
+                      disabled={msg.visualizing}
+                      onClick={() => handleVisualize(msg.id, msg.content)}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[var(--legal-teal,#0E6268)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b5258] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {msg.visualizing ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <ImageIcon className="h-4 w-4" />
+                      )}
+                      <span>
+                        {msg.visualizing
+                          ? isRTL
+                            ? "جارٍ إنشاء الإنفوغرافيك..."
+                            : "Creating infographic..."
+                          : isRTL
+                            ? "حوّلها إلى إنفوغرافيك"
+                            : "Visualize Answer"}
+                      </span>
+                    </button>
+                    {msg.visualizationError && (
+                      <p className="mt-1.5 text-xs text-red-500">
+                        {isRTL
+                          ? "تعذر إنشاء الإنفوغرافيك. حاول مرة أخرى."
+                          : "Unable to create the infographic. Please try again."}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}

@@ -98,3 +98,46 @@ Stage Summary:
 - Knowledge Library side-sheet browsable from the chat header
 - Topic detail shows complete structured legal content from the JSON template
 - Screenshot: knowledge-library-topic-detail.png
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Implement "Visualize Answer" infographic generation feature
+
+Work Log:
+- Reviewed comprehensive feature prompt covering architecture, safety, UX, templates, schema, API routes, rendering, and testing
+- Created `/src/lib/infographic-schema.ts` — Zod schema for InfographicSpec with section, source, urgency, branding sub-schemas
+- Created `/src/lib/visualization-system-prompt.ts` — LLM system prompt for infographic structuring, brand constants, disclaimers, high-risk keywords
+- Updated `prisma/schema.prisma` — added Visualization model with all required columns (id, topicId, sourceAnswerHash, language, template, inputAnswer, infographicSpec, status, rendered paths, generatedByModel, timestamps)
+- Ran `prisma db push` + reseed — schema synced, data seeded
+- Created 3 API routes via subagent:
+  - `POST /api/visualizations` — validates answer, checks high-risk keywords, calls LLM, validates JSON with Zod, saves to DB
+  - `GET /api/visualizations/[id]` — fetches visualization record, returns parsed spec
+  - `POST /api/visualizations/[id]/regenerate` — reuses original answer, re-calls LLM, updates DB
+- Created 10 React components via subagent:
+  - `icon-map.tsx` — maps 11 icon names to lucide-react components
+  - `InfographicHeader.tsx` — dark navy header with jurisdiction badge, gradient accent, decorative bars
+  - `UrgencyBanner.tsx` — 3-severity alert banner (info/warning/urgent) with dynamic colors
+  - `InfographicSection.tsx` — 5 layout variants (bullets, checklist, two_columns, timeline, documents)
+  - `LegalSourcesFooter.tsx` — teal background with FileText icons, reference badges
+  - `DisclaimerFooter.tsx` — gray disclaimer with ShieldAlert icon, jurisdiction badge
+  - `BrandFooter.tsx` — dark navy branding bar
+  - `LegalInfographic.tsx` — main 1080x1350px composition component
+  - `InfographicPreview.tsx` — browser preview with responsive CSS scaling, PNG/PDF download, regenerate
+  - `VisualizeAnswerButton.tsx` — 3-state button (idle/loading/error) with bilingual labels
+- Restored original page.tsx and integrated Visualize Answer button into chat assistant messages
+- Created `/src/app/visualizations/[id]/page.tsx` — visualization preview page with loading/error states
+- Installed `html-to-image` and `jspdf` for client-side PNG/PDF export
+- Fixed import errors: changed `import db from` to `import { db } from` in all 3 API routes
+- Fixed InfographicPreview: wired Back button to router.push("/"), wired Regenerate button to regenerate API
+- Build passes successfully: all routes compile, static pages generated
+- Wrote 25 unit tests in `/src/lib/__tests__/infographic-schema.test.ts` — all passing
+- Wrote comprehensive README in `/download/VISUALIZE_ANSWER_README.md`
+- Browser verification: chat page loads correctly at localhost:3000
+
+Stage Summary:
+- Complete infographic generation feature: answer → LLM → Zod validation → React renderer → preview → PNG/PDF export
+- 3 API routes (create, get, regenerate), 10 React components, 2 lib files, 1 Prisma model
+- Full Arabic RTL + English LTR support in infographic rendering
+- Legal safety: source validation, high-risk keyword detection, disclaimer preservation, needs_review flagging
+- 25 unit tests passing, build clean, README documented

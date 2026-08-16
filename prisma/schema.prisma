@@ -38,6 +38,7 @@ model Topic {
   versions       TopicVersion[]
   legalSources   TopicLegalSource[]
   analytics      TopicAnalytics[]
+  visualizations Visualization[]
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
@@ -130,6 +131,32 @@ model UnansweredQuestion {
   updatedAt           DateTime @updatedAt @map("updated_at")
 
   @@map("unanswered_questions")
+}
+
+// ─── Visualizations ───────────────────────────────────
+model Visualization {
+  id                 String   @id @default(cuid())
+  topicId            String?  @map("topic_id")
+  topic              Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  topicVersionId     String?  @map("topic_version_id")
+
+  sourceAnswerHash   String   @map("source_answer_hash")
+  language           String
+  template           String   @default("legal-summary")
+
+  inputAnswer        String   @map("input_answer")
+  infographicSpec    String   @map("infographic_spec") // JSON string
+
+  status             String   @default("generated")
+
+  renderedImagePath  String?  @map("rendered_image_path")
+  renderedPdfPath    String?  @map("rendered_pdf_path")
+
+  generatedByModel   String?  @map("generated_by_model")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("visualizations")
 }
 
 // ─── Topic Analytics ─────────────────────────────────
