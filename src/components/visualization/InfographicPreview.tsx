@@ -37,7 +37,6 @@ export default function InfographicPreview({
   const updateScale = useCallback(() => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
-      // Leave padding on sides
       const availableWidth = containerWidth - 48;
       const newScale = Math.min(availableWidth / 1080, 1);
       setScale(newScale);
@@ -62,7 +61,6 @@ export default function InfographicPreview({
       const element = infographicRef.current;
       if (!element) return;
 
-      // Try to use html-to-image for PNG export
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(element, {
         width: 1080,
@@ -75,7 +73,6 @@ export default function InfographicPreview({
       link.href = dataUrl;
       link.click();
     } catch {
-      // Fallback: notify user that html-to-image is needed
       setDownloadError(
         spec.language === "ar"
           ? "تعذر تنزيل الصورة حالياً"
@@ -93,7 +90,6 @@ export default function InfographicPreview({
       const element = infographicRef.current;
       if (!element) return;
 
-      // Dynamic import for PDF export
       const { default: jsPDF } = await import("jspdf");
       const { toPng } = await import("html-to-image");
 
@@ -109,8 +105,7 @@ export default function InfographicPreview({
         img.onload = resolve;
       });
 
-      // Calculate dimensions for PDF
-      const pdfWidth = 1080 * 0.264583; // px to mm at 96 DPI
+      const pdfWidth = 1080 * 0.264583;
       const pdfHeight = (img.height / img.width) * pdfWidth;
 
       const pdf = new jsPDF({
@@ -137,16 +132,16 @@ export default function InfographicPreview({
 
   return (
     <div
-      className="min-h-screen bg-gray-100 flex flex-col"
+      className="min-h-screen bg-legal-surface flex flex-col"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      {/* Toolbar */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      {/* Toolbar — glass style */}
+      <div className="sticky top-0 z-50 glass">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-legal-surface-overlay rounded-xl transition-colors duration-200"
               aria-label={lang === "ar" ? "رجوع" : "Back"}
             >
               <ArrowLeft
@@ -155,11 +150,11 @@ export default function InfographicPreview({
               {lang === "ar" ? "رجوع" : "Back"}
             </button>
 
-            <div className="h-6 w-px bg-gray-200" />
+            <div className="h-6 w-px bg-border/50" />
 
             <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-gray-500" />
-              <span className="text-sm font-semibold text-gray-800">
+              <Eye className="h-4 w-4 text-[var(--legal-cedar)]" />
+              <span className="text-sm font-semibold text-foreground">
                 {lang === "ar" ? "معاينة" : "Preview"}
               </span>
             </div>
@@ -168,7 +163,7 @@ export default function InfographicPreview({
           <div className="flex items-center gap-2">
             {/* Status badge */}
             {needsReview && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--legal-terracotta-muted)] text-[var(--legal-terracotta)] border border-[var(--legal-terracotta)]/15">
                 <AlertCircle className="h-3.5 w-3.5" />
                 {lang === "ar" ? "يحتاج مراجعة" : "Needs Review"}
               </span>
@@ -178,7 +173,7 @@ export default function InfographicPreview({
             <button
               onClick={handleDownloadPNG}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-[var(--legal-terracotta)] to-[oklch(0.50_0.10_50)] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
             >
               {isDownloading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -192,7 +187,7 @@ export default function InfographicPreview({
             <button
               onClick={handleDownloadPDF}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-[oklch(0.35_0.08_50)] to-[oklch(0.30_0.06_40)] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
             >
               <FileDown className="h-4 w-4" />
               PDF
@@ -212,20 +207,22 @@ export default function InfographicPreview({
                     router.push(`/visualizations/${data.id}`);
                   }
                 } catch {
-                  // Silently fail, user can retry
+                  // Silently fail
                 } finally {
                   setIsRegenerating(false);
                 }
               }}
               disabled={isRegenerating}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground bg-legal-surface-elevated border border-border/60 hover:text-foreground hover:bg-legal-surface-overlay disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition-all duration-200"
             >
               {isRegenerating ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              {lang === "ar" ? "إعادة توليد" : "Regenerate"}
+              <span className="hidden sm:inline">
+                {lang === "ar" ? "إعادة توليد" : "Regenerate"}
+              </span>
             </button>
           </div>
         </div>
@@ -233,14 +230,14 @@ export default function InfographicPreview({
 
       {/* Error toast */}
       {downloadError && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-3 bg-red-600 text-white text-sm font-medium rounded-lg shadow-lg">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-3 bg-red-600 text-white text-sm font-medium rounded-xl shadow-lg animate-slide-in-bottom">
           <AlertCircle className="h-4 w-4" />
           {downloadError}
         </div>
       )}
 
       {/* Preview area */}
-      <div className="flex-1 flex items-start justify-center py-8 px-4 overflow-auto">
+      <div className="flex-1 flex items-start justify-center py-8 px-4 overflow-auto bg-legal-surface">
         <div ref={containerRef} className="w-full max-w-[1128px]">
           <div
             style={{

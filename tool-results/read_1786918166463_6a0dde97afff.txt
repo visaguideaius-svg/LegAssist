@@ -1,0 +1,693 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import React, { useState, useRef, useEffect, useCallback } from "react";
+     4→     4→import { Button } from "@/components/ui/button";
+     5→     5→import { Textarea } from "@/components/ui/textarea";
+     6→     6→import { Separator } from "@/components/ui/separator";
+     7→     7→import {
+     8→     8→  Tooltip,
+     9→     9→  TooltipContent,
+    10→    10→  TooltipProvider,
+    11→    11→  TooltipTrigger,
+    12→    12→} from "@/components/ui/tooltip";
+    13→    13→import {
+    14→    14→  Scale,
+    15→    15→  Send,
+    16→    16→  RotateCcw,
+    17→    17→  AlertTriangle,
+    18→    18→  Sparkles,
+    19→    19→  Briefcase,
+    20→    20→  Home,
+    21→    21→  Users,
+    22→    22→  CreditCard,
+    23→    23→  Car,
+    24→    24→  Shield,
+    25→    25→  Building2,
+    26→    26→  Gavel,
+    27→    27→  Globe,
+    28→    28→  Loader2,
+    29→    29→  ChevronDown,
+    30→    30→  Lock,
+    31→    31→  BookOpen,
+    32→    32→  ImageIcon,
+    33→    33→  Moon,
+    34→    34→  Sun,
+    35→    35→  ArrowDown,
+    36→    36→} from "lucide-react";
+    37→    37→import ReactMarkdown from "react-markdown";
+    38→    38→import PrivacyNoticeDialog from "@/components/privacy-notice-dialog";
+    39→    39→import KnowledgeLibrary from "@/components/knowledge-library";
+    40→    40→
+    41→    41→/* ───────── Types ───────── */
+    42→    42→interface Message {
+    43→    43→  id: string;
+    44→    44→  role: "user" | "assistant";
+    45→    45→  content: string;
+    46→    46→  timestamp: Date;
+    47→    47→  visualizing?: boolean;
+    48→    48→  visualizationId?: string;
+    49→    49→  visualizationError?: boolean;
+    50→    50→}
+    51→    51→
+    52→    52→interface TopicButton {
+    53→    53→  icon: React.ReactNode;
+    54→    54→  labelAr: string;
+    55→    55→  labelEn: string;
+    56→    56→  queryAr: string;
+    57→    57→  queryEn: string;
+    58→    58→  color: string;
+    59→    59→}
+    60→    60→
+    61→    61→/* ───────── Constants ───────── */
+    62→    62→const TOPICS: TopicButton[] = [
+    63→    63→  {
+    64→    64→    icon: <Briefcase className="h-4 w-4" />,
+    65→    65→    labelAr: "قانون العمل",
+    66→    66→    labelEn: "Labor Law",
+    67→    67→    queryAr: "أريد معرفة حقوقي في قانون العمل الأردني",
+    68→    68→    queryEn: "I want to know my rights under Jordanian labor law",
+    69→    69→    color: "from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400",
+    70→    70→  },
+    71→    71→  {
+    72→    72→    icon: <Home className="h-4 w-4" />,
+    73→    73→    labelAr: "الإيجار والعقار",
+    74→    74→    labelEn: "Rent & Real Estate",
+    75→    75→    queryAr: "ما هي حقوقي ك مستأجر في الأردن؟",
+    76→    76→    queryEn: "What are my rights as a tenant in Jordan?",
+    77→    77→    color: "from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400",
+    78→    78→  },
+    79→    79→  {
+    80→    80→    icon: <Users className="h-4 w-4" />,
+    81→    81→    labelAr: "القانون الأسري",
+    82→    82→    labelEn: "Family Law",
+    83→    83→    queryAr: "أسئلة حول القانون الأسري في الأردن",
+    84→    84→    queryEn: "Questions about family law in Jordan",
+    85→    85→    color: "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400",
+    86→    86→  },
+    87→    87→  {
+    88→    88→    icon: <CreditCard className="h-4 w-4" />,
+    89→    89→    labelAr: "الديون والتنفيذ",
+    90→    90→    labelEn: "Debt & Enforcement",
+    91→    91→    queryAr: "كيف أتعامل مع ديون وقيود تنفيذية؟",
+    92→    92→    queryEn: "How do I deal with debts and enforcement actions?",
+    93→    93→    color: "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400",
+    94→    94→  },
+    95→    95→  {
+    96→    96→    icon: <Car className="h-4 w-4" />,
+    97→    97→    labelAr: "الحوادث والتعويض",
+    98→    98→    labelEn: "Accidents & Compensation",
+    99→    99→    queryAr: "ما هي إجراءات التعويض عن حادث مروري؟",
+   100→   100→    queryEn: "What are the procedures for traffic accident compensation?",
+   101→   101→    color: "from-orange-500/10 to-red-500/10 text-orange-600 dark:text-orange-400",
+   102→   102→  },
+   103→   103→  {
+   104→   104→    icon: <Shield className="h-4 w-4" />,
+   105→   105→    labelAr: "الجرم الإلكتروني",
+   106→   106→    labelEn: "Cybercrime",
+   107→   107→    queryAr: "كيف أحمي نفسي من الجرائم الإلكترونية؟",
+   108→   108→    queryEn: "How do I protect myself from cybercrime?",
+   109→   109→    color: "from-violet-500/10 to-purple-500/10 text-violet-600 dark:text-violet-400",
+   110→   110→  },
+   111→   111→  {
+   112→   112→    icon: <Building2 className="h-4 w-4" />,
+   113→   113→    labelAr: "المؤسسات الصغيرة",
+   114→   114→    labelEn: "Small Business",
+   115→   115→    queryAr: "ما هي خطوات تأسيس شركة في الأردن؟",
+   116→   116→    queryEn: "What are the steps to register a company in Jordan?",
+   117→   117→    color: "from-cyan-500/10 to-sky-500/10 text-cyan-600 dark:text-cyan-400",
+   118→   118→  },
+   119→   119→  {
+   120→   120→    icon: <Gavel className="h-4 w-4" />,
+   121→   121→    labelAr: "إجراءات المحاكم",
+   122→   122→    labelEn: "Court Procedures",
+   123→   123→    queryAr: "ما هي خطوات رفع دعوى أمام المحاكم الأردنية؟",
+   124→   124→    queryEn: "What are the steps to file a case in Jordanian courts?",
+   125→   125→    color: "from-indigo-500/10 to-blue-500/10 text-indigo-600 dark:text-indigo-400",
+   126→   126→  },
+   127→   127→];
+   128→   128→
+   129→   129→const DISCLAIMER_AR =
+   130→   130→  "هذه معلومات قانونية عامة وليست استشارة قانونية. للتقييم النهائي لحالتك، يُنصح بمراجعة محامٍ مرخّص.";
+   131→   131→const DISCLAIMER_EN =
+   132→   132→  "This is general legal information, not legal advice. For a final assessment of your situation, consult a licensed lawyer.";
+   133→   133→
+   134→   134→/* ───────── Component ───────── */
+   135→   135→export default function LegalChatPage() {
+   136→   136→  const [messages, setMessages] = useState<Message[]>([]);
+   137→   137→  const [input, setInput] = useState("");
+   138→   138→  const [isLoading, setIsLoading] = useState(false);
+   139→   139→  const [language, setLanguage] = useState<"ar" | "en">("ar");
+   140→   140→  const [isTyping, setIsTyping] = useState(false);
+   141→   141→  const [showScrollBtn, setShowScrollBtn] = useState(false);
+   142→   142→  const [showPrivacy, setShowPrivacy] = useState(false);
+   143→   143→  const [showLibrary, setShowLibrary] = useState(false);
+   144→   144→
+   145→   145→  const messagesEndRef = useRef<HTMLDivElement>(null);
+   146→   146→  const textareaRef = useRef<HTMLTextAreaElement>(null);
+   147→   147→  const scrollAreaRef = useRef<HTMLDivElement>(null);
+   148→   148→
+   149→   149→  const isRTL = language === "ar";
+   150→   150→
+   151→   151→  const scrollToBottom = useCallback(() => {
+   152→   152→    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+   153→   153→  }, []);
+   154→   154→
+   155→   155→  useEffect(() => {
+   156→   156→    scrollToBottom();
+   157→   157→  }, [messages, isTyping, scrollToBottom]);
+   158→   158→
+   159→   159→  useEffect(() => {
+   160→   160→    const handleScroll = () => {
+   161→   161→      if (scrollAreaRef.current) {
+   162→   162→        const { scrollTop, scrollHeight, clientHeight } =
+   163→   163→          scrollAreaRef.current;
+   164→   164→        setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 120);
+   165→   165→      }
+   166→   166→    };
+   167→   167→    const el = scrollAreaRef.current;
+   168→   168→    el?.addEventListener("scroll", handleScroll);
+   169→   169→    return () => el?.removeEventListener("scroll", handleScroll);
+   170→   170→  }, []);
+   171→   171→
+   172→   172→  /* ── Send message ── */
+   173→   173→  const sendMessage = useCallback(
+   174→   174→    async (text?: string) => {
+   175→   175→      const content = (text || input).trim();
+   176→   176→      if (!content || isLoading) return;
+   177→   177→
+   178→   178→      const userMsg: Message = {
+   179→   179→        id: crypto.randomUUID(),
+   180→   180→        role: "user",
+   181→   181→        content,
+   182→   182→        timestamp: new Date(),
+   183→   183→      };
+   184→   184→
+   185→   185→      const updatedMessages = [...messages, userMsg];
+   186→   186→      setMessages(updatedMessages);
+   187→   187→      setInput("");
+   188→   188→      setIsLoading(true);
+   189→   189→      setIsTyping(true);
+   190→   190→
+   191→   191→      try {
+   192→   192→        const res = await fetch("/api/chat", {
+   193→   193→          method: "POST",
+   194→   194→          headers: { "Content-Type": "application/json" },
+   195→   195→          body: JSON.stringify({
+   196→   196→            messages: updatedMessages.map((m) => ({
+   197→   197→              role: m.role,
+   198→   198→              content: m.content,
+   199→   199→            })),
+   200→   200→            language,
+   201→   201→          }),
+   202→   202→        });
+   203→   203→
+   204→   204→        if (!res.ok) throw new Error("Network response was not ok");
+   205→   205→
+   206→   206→        const data = await res.json();
+   207→   207→        const assistantMsg: Message = {
+   208→   208→          id: crypto.randomUUID(),
+   209→   209→          role: "assistant",
+   210→   210→          content: data.message || "عذراً، لم أتمكن من معالجة طلبك.",
+   211→   211→          timestamp: new Date(),
+   212→   212→        };
+   213→   213→        setMessages((prev) => [...prev, assistantMsg]);
+   214→   214→      } catch {
+   215→   215→        const errorMsg: Message = {
+   216→   216→          id: crypto.randomUUID(),
+   217→   217→          role: "assistant",
+   218→   218→          content:
+   219→   219→            language === "ar"
+   220→   220→              ? "عذراً، حدث خطأ في الاتصال. يُرجى المحاولة مرة أخرى."
+   221→   221→              : "Sorry, a connection error occurred. Please try again.",
+   222→   222→          timestamp: new Date(),
+   223→   223→        };
+   224→   224→        setMessages((prev) => [...prev, errorMsg]);
+   225→   225→      } finally {
+   226→   226→        setIsLoading(false);
+   227→   227→        setIsTyping(false);
+   228→   228→        textareaRef.current?.focus();
+   229→   229→      }
+   230→   230→    },
+   231→   231→    [input, isLoading, messages, language]
+   232→   232→  );
+   233→   233→
+   234→   234→  const handleKeyDown = (e: React.KeyboardEvent) => {
+   235→   235→    if (e.key === "Enter" && !e.shiftKey) {
+   236→   236→      e.preventDefault();
+   237→   237→      sendMessage();
+   238→   238→    }
+   239→   239→  };
+   240→   240→
+   241→   241→  const resetChat = () => {
+   242→   242→    setMessages([]);
+   243→   243→    setInput("");
+   244→   244→    setIsLoading(false);
+   245→   245→    setIsTyping(false);
+   246→   246→    textareaRef.current?.focus();
+   247→   247→  };
+   248→   248→
+   249→   249→  const handleTopicClick = (topic: TopicButton) => {
+   250→   250→    const query = isRTL ? topic.queryAr : topic.queryEn;
+   251→   251→    sendMessage(query);
+   252→   252→  };
+   253→   253→
+   254→   254→  /* ── Visualize handler ── */
+   255→   255→  const handleVisualize = useCallback(
+   256→   256→    async (msgId: string, answerText: string) => {
+   257→   257→      setMessages((prev) =>
+   258→   258→        prev.map((m) =>
+   259→   259→          m.id === msgId
+   260→   260→            ? { ...m, visualizing: true, visualizationError: false }
+   261→   261→            : m
+   262→   262→        )
+   263→   263→      );
+   264→   264→
+   265→   265→      try {
+   266→   266→        const res = await fetch("/api/visualizations", {
+   267→   267→          method: "POST",
+   268→   268→          headers: { "Content-Type": "application/json" },
+   269→   269→          body: JSON.stringify({ answerId: msgId, answerText, language }),
+   270→   270→        });
+   271→   271→
+   272→   272→        if (!res.ok) {
+   273→   273→          const errData = await res.json().catch(() => ({}));
+   274→   274→          throw new Error(errData.error || "Visualization failed");
+   275→   275→        }
+   276→   276→
+   277→   277→        const data = await res.json();
+   278→   278→        setMessages((prev) =>
+   279→   279→          prev.map((m) =>
+   280→   280→            m.id === msgId
+   281→   281→              ? { ...m, visualizing: false, visualizationId: data.id }
+   282→   282→              : m
+   283→   283→          )
+   284→   284→        );
+   285→   285→        window.location.href = `/visualizations/${data.id}`;
+   286→   286→      } catch {
+   287→   287→        setMessages((prev) =>
+   288→   288→          prev.map((m) =>
+   289→   289→            m.id === msgId
+   290→   290→              ? { ...m, visualizing: false, visualizationError: true }
+   291→   291→              : m
+   292→   292→          )
+   293→   293→        );
+   294→   294→      }
+   295→   295→    },
+   296→   296→    [language]
+   297→   297→  );
+   298→   298→
+   299→   299→  /* ── Render ── */
+   300→   300→  return (
+   301→   301→    <div className="h-screen flex flex-col bg-legal-surface">
+   302→   302→      {/* ═══════════════════════════════════════════════════
+   303→   303→          HEADER — Minimal, clean, glass
+   304→   304→          ═══════════════════════════════════════════════════ */}
+   305→   305→      <header className="glass sticky top-0 z-50">
+   306→   306→        <div className="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
+   307→   307→          {/* Logo + Title */}
+   308→   308→          <div className="flex items-center gap-3">
+   309→   309→            <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white shadow-lg shadow-[oklch(0.35_0.15_270)/0.15]">
+   310→   310→              <Scale className="h-4.5 w-4.5" strokeWidth={2.2} />
+   311→   311→            </div>
+   312→   312→            <div className="hidden sm:block">
+   313→   313→              <h1 className="text-[15px] font-semibold leading-tight tracking-tight text-foreground">
+   314→   314→                {isRTL ? "المساعد القانوني" : "Legal Assistant"}
+   315→   315→              </h1>
+   316→   316→              <p className="text-[11px] text-muted-foreground leading-none mt-0.5">
+   317→   317→                {isRTL ? "المملكة الأردنية الهاشمية" : "Hashemite Kingdom of Jordan"}
+   318→   318→              </p>
+   319→   319→            </div>
+   320→   320→          </div>
+   321→   321→
+   322→   322→          {/* Actions */}
+   323→   323→          <div className="flex items-center gap-1">
+   324→   324→            <TooltipProvider delayDuration={300}>
+   325→   325→              <Tooltip>
+   326→   326→                <TooltipTrigger asChild>
+   327→   327→                  <Button
+   328→   328→                    variant="ghost"
+   329→   329→                    size="icon"
+   330→   330→                    onClick={() => setLanguage(isRTL ? "en" : "ar")}
+   331→   331→                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+   332→   332→                  >
+   333→   333→                    <Globe className="h-4 w-4" />
+   334→   334→                  </Button>
+   335→   335→                </TooltipTrigger>
+   336→   336→                <TooltipContent side="bottom" className="text-xs">
+   337→   337→                  {isRTL ? "English" : "العربية"}
+   338→   338→                </TooltipContent>
+   339→   339→              </Tooltip>
+   340→   340→            </TooltipProvider>
+   341→   341→
+   342→   342→            <TooltipProvider delayDuration={300}>
+   343→   343→              <Tooltip>
+   344→   344→                <TooltipTrigger asChild>
+   345→   345→                  <Button
+   346→   346→                    variant="ghost"
+   347→   347→                    size="icon"
+   348→   348→                    onClick={() => setShowLibrary(true)}
+   349→   349→                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+   350→   350→                  >
+   351→   351→                    <BookOpen className="h-4 w-4" />
+   352→   352→                  </Button>
+   353→   353→                </TooltipTrigger>
+   354→   354→                <TooltipContent side="bottom" className="text-xs">
+   355→   355→                  {isRTL ? "مكتبة المعرفة" : "Knowledge Library"}
+   356→   356→                </TooltipContent>
+   357→   357→              </Tooltip>
+   358→   358→            </TooltipProvider>
+   359→   359→
+   360→   360→            <TooltipProvider delayDuration={300}>
+   361→   361→              <Tooltip>
+   362→   362→                <TooltipTrigger asChild>
+   363→   363→                  <Button
+   364→   364→                    variant="ghost"
+   365→   365→                    size="icon"
+   366→   366→                    onClick={() => setShowPrivacy(true)}
+   367→   367→                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+   368→   368→                  >
+   369→   369→                    <Lock className="h-4 w-4" />
+   370→   370→                  </Button>
+   371→   371→                </TooltipTrigger>
+   372→   372→                <TooltipContent side="bottom" className="text-xs">
+   373→   373→                  {isRTL ? "إشعار الخصوصية" : "Privacy Notice"}
+   374→   374→                </TooltipContent>
+   375→   375→              </Tooltip>
+   376→   376→            </TooltipProvider>
+   377→   377→
+   378→   378→            {messages.length > 0 && (
+   379→   379→              <TooltipProvider delayDuration={300}>
+   380→   380→                <Tooltip>
+   381→   381→                  <TooltipTrigger asChild>
+   382→   382→                    <Button
+   383→   383→                      variant="ghost"
+   384→   384→                      size="icon"
+   385→   385→                      onClick={resetChat}
+   386→   386→                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+   387→   387→                    >
+   388→   388→                      <RotateCcw className="h-4 w-4" />
+   389→   389→                    </Button>
+   390→   390→                  </TooltipTrigger>
+   391→   391→                  <TooltipContent side="bottom" className="text-xs">
+   392→   392→                    {isRTL ? "محادثة جديدة" : "New chat"}
+   393→   393→                  </TooltipContent>
+   394→   394→                </Tooltip>
+   395→   395→              </TooltipProvider>
+   396→   396→            )}
+   397→   397→          </div>
+   398→   398→        </div>
+   399→   399→      </header>
+   400→   400→
+   401→   401→      {/* ═══════════════════════════════════════════════════
+   402→   402→          MAIN CONTENT
+   403→   403→          ═══════════════════════════════════════════════════ */}
+   404→   404→      <main className="flex-1 flex flex-col max-w-4xl w-full mx-auto relative overflow-hidden">
+   405→   405→        {/* Disclaimer — subtle top bar */}
+   406→   406→        <div className="px-5 pt-3 animate-fade-in">
+   407→   407→          <div className="disclaimer-gradient flex items-start gap-2.5 rounded-xl px-3.5 py-2.5">
+   408→   408→            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[var(--legal-amber)]" />
+   409→   409→            <p className="text-[11px] leading-relaxed text-muted-foreground">
+   410→   410→              {isRTL ? DISCLAIMER_AR : DISCLAIMER_EN}
+   411→   411→            </p>
+   412→   412→          </div>
+   413→   413→        </div>
+   414→   414→
+   415→   415→        {/* Messages / Welcome */}
+   416→   416→        <div
+   417→   417→          ref={scrollAreaRef}
+   418→   418→          className="flex-1 overflow-y-auto px-5 py-4 chat-scroll"
+   419→   419→          style={{ minHeight: 0 }}
+   420→   420→        >
+   421→   421→          {/* ═══ WELCOME SCREEN ═══ */}
+   422→   422→          {messages.length === 0 && !isLoading && (
+   423→   423→            <div className="flex flex-col items-center justify-center py-8 gap-8 animate-fade-in">
+   424→   424→              {/* Hero area */}
+   425→   425→              <div className="text-center space-y-4 max-w-lg">
+   426→   426→                {/* Animated icon */}
+   427→   427→                <div className="mx-auto relative">
+   428→   428→                  <div className="flex items-center justify-center h-20 w-20 rounded-2xl bg-gradient-to-br from-[oklch(0.45_0.18_270)/0.08] to-[oklch(0.75_0.14_75)/0.06] ring-1 ring-[oklch(0.45_0.18_270)/0.08]">
+   429→   429→                    <Sparkles className="h-9 w-9 text-primary" strokeWidth={1.5} />
+   430→   430→                  </div>
+   431→   431→                  <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[oklch(0.55_0.18_270)/0.04] to-transparent blur-xl -z-10" />
+   432→   432→                </div>
+   433→   433→
+   434→   434→                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+   435→   435→                  {isRTL
+   436→   436→                    ? "مرحباً بك"
+   437→   437→                    : "Welcome"}
+   438→   438→                </h2>
+   439→   439→                <p className="text-[15px] text-muted-foreground leading-relaxed max-w-sm mx-auto">
+   440→   440→                  {isRTL
+   441→   441→                    ? "يمكنني مساعدتك في فهم القوانين والإجراءات القانونية في الأردن. اختر موضوعاً أو اطرح سؤالك."
+   442→   442→                    : "I can help you understand Jordanian laws and legal procedures. Choose a topic or ask directly."}
+   443→   443→                </p>
+   444→   444→              </div>
+   445→   445→
+   446→   446→              {/* Topic grid — horizontal scroll on mobile, grid on desktop */}
+   447→   447→              <div className="w-full max-w-2xl">
+   448→   448→                <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60 mb-3 px-1">
+   449→   449→                  {isRTL ? "استكشف المواضيع" : "Explore topics"}
+   450→   450→                </p>
+   451→   451→                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+   452→   452→                  {TOPICS.map((topic) => (
+   453→   453→                    <button
+   454→   454→                      key={topic.labelEn}
+   455→   455→                      onClick={() => handleTopicClick(topic)}
+   456→   456→                      className="topic-card group relative flex flex-col items-center gap-2.5 rounded-2xl bg-legal-surface-elevated border border-border/50 px-3 py-4 text-center hover:border-primary/20 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97]"
+   457→   457→                    >
+   458→   458→                      <span className={`flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br ${topic.color} shrink-0 transition-transform duration-200 group-hover:scale-110`}>
+   459→   459→                        {topic.icon}
+   460→   460→                      </span>
+   461→   461→                      <span className="text-[13px] font-medium leading-tight text-foreground">
+   462→   462→                        {isRTL ? topic.labelAr : topic.labelEn}
+   463→   463→                      </span>
+   464→   464→                    </button>
+   465→   465→                  ))}
+   466→   466→                </div>
+   467→   467→              </div>
+   468→   468→
+   469→   469→              {/* Quick suggestion chips */}
+   470→   470→              <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg">
+   471→   471→                {[
+   472→   472→                  { ar: "ما حقوقي كموظف؟", en: "What are my employee rights?" },
+   473→   473→                  { ar: "كيف أرفع دعوى؟", en: "How do I file a lawsuit?" },
+   474→   474→                  { ar: "حقوق المستأجر", en: "Tenant rights" },
+   475→   475→                ].map((q) => (
+   476→   476→                  <button
+   477→   477→                    key={q.en}
+   478→   478→                    onClick={() => sendMessage(isRTL ? q.ar : q.en)}
+   479→   479→                    className="text-xs text-muted-foreground bg-legal-surface-elevated border border-border/50 rounded-full px-3.5 py-1.5 hover:border-primary/20 hover:text-foreground transition-all duration-150"
+   480→   480→                  >
+   481→   481→                    {isRTL ? q.ar : q.en}
+   482→   482→                  </button>
+   483→   483→                ))}
+   484→   484→              </div>
+   485→   485→            </div>
+   486→   486→          )}
+   487→   487→
+   488→   488→          {/* ═══ MESSAGE LIST ═══ */}
+   489→   489→          {messages.map((msg, idx) => (
+   490→   490→            <div
+   491→   491→              key={msg.id}
+   492→   492→              className={`flex mb-5 animate-fade-in-up ${
+   493→   493→                msg.role === "user" ? "justify-end" : "justify-start"
+   494→   494→              }`}
+   495→   495→              style={{ animationDelay: `${Math.min(idx * 0.05, 0.2)}s` }}
+   496→   496→            >
+   497→   497→              <div
+   498→   498→                className={`max-w-[88%] sm:max-w-[78%] ${
+   499→   499→                  msg.role === "user" ? "msg-user" : "msg-assistant"
+   500→   500→                } px-5 py-3.5`}
+   501→   501→              >
+   502→   502→                {/* Assistant header */}
+   503→   503→                {msg.role === "assistant" && (
+   504→   504→                  <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-border/30">
+   505→   505→                    <div className="flex items-center justify-center h-5 w-5 rounded-md bg-primary/8">
+   506→   506→                      <Scale className="h-3 w-3 text-primary" />
+   507→   507→                    </div>
+   508→   508→                    <span className="text-[11px] font-semibold text-primary/80">
+   509→   509→                      {isRTL ? "المساعد القانوني" : "Legal Assistant"}
+   510→   510→                    </span>
+   511→   511→                    <span className="text-[10px] text-muted-foreground/50">
+   512→   512→                      {msg.timestamp.toLocaleTimeString(isRTL ? "ar-JO" : "en-US", {
+   513→   513→                        hour: "2-digit",
+   514→   514→                        minute: "2-digit",
+   515→   515→                      })}
+   516→   516→                    </span>
+   517→   517→                  </div>
+   518→   518→                )}
+   519→   519→
+   520→   520→                {/* Content */}
+   521→   521→                <div
+   522→   522→                  className={`prose prose-sm max-w-none leading-relaxed prose-legal ${
+   523→   523→                    msg.role === "user"
+   524→   524→                      ? "prose-invert"
+   525→   525→                      : "prose-neutral dark:prose-invert"
+   526→   526→                  }`}
+   527→   527→                >
+   528→   528→                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+   529→   529→                </div>
+   530→   530→
+   531→   531→                {/* User timestamp */}
+   532→   532→                {msg.role === "user" && (
+   533→   533→                  <p className="text-[10px] mt-2 text-white/40">
+   534→   534→                    {msg.timestamp.toLocaleTimeString(isRTL ? "ar-JO" : "en-US", {
+   535→   535→                      hour: "2-digit",
+   536→   536→                      minute: "2-digit",
+   537→   537→                    })}
+   538→   538→                  </p>
+   539→   539→                )}
+   540→   540→
+   541→   541→                {/* ── Visualize Answer Button ── */}
+   542→   542→                {msg.role === "assistant" && (
+   543→   543→                  <div className="mt-3 pt-2.5 border-t border-border/20">
+   544→   544→                    <button
+   545→   545→                      type="button"
+   546→   546→                      disabled={msg.visualizing}
+   547→   547→                      onClick={() => handleVisualize(msg.id, msg.content)}
+   548→   548→                      className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[oklch(0.40_0.12_165)] to-[oklch(0.35_0.15_270)] px-3.5 py-2 text-[13px] font-medium text-white shadow-sm shadow-[oklch(0.35_0.15_270)/0.1] transition-all duration-200 hover:shadow-md hover:shadow-[oklch(0.35_0.15_270)/0.15] disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]"
+   549→   549→                    >
+   550→   550→                      {msg.visualizing ? (
+   551→   551→                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+   552→   552→                      ) : (
+   553→   553→                        <ImageIcon className="h-3.5 w-3.5" />
+   554→   554→                      )}
+   555→   555→                      <span>
+   556→   556→                        {msg.visualizing
+   557→   557→                          ? isRTL
+   558→   558→                            ? "جارٍ الإنشاء..."
+   559→   559→                            : "Creating..."
+   560→   560→                          : isRTL
+   561→   561→                            ? "حوّلها إلى إنفوغرافيك"
+   562→   562→                            : "Visualize Answer"}
+   563→   563→                      </span>
+   564→   564→                    </button>
+   565→   565→                    {msg.visualizationError && (
+   566→   566→                      <p className="mt-1.5 text-[11px] text-red-500/80">
+   567→   567→                        {isRTL
+   568→   568→                          ? "تعذر الإنشاء. حاول مرة أخرى."
+   569→   569→                          : "Unable to create. Please try again."}
+   570→   570→                      </p>
+   571→   571→                    )}
+   572→   572→                  </div>
+   573→   573→                )}
+   574→   574→              </div>
+   575→   575→            </div>
+   576→   576→          ))}
+   577→   577→
+   578→   578→          {/* ═══ TYPING INDICATOR ═══ */}
+   579→   579→          {isTyping && (
+   580→   580→            <div className="flex mb-5 justify-start animate-fade-in">
+   581→   581→              <div className="msg-assistant px-5 py-3.5">
+   582→   582→                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/30">
+   583→   583→                  <div className="flex items-center justify-center h-5 w-5 rounded-md bg-primary/8">
+   584→   584→                    <Scale className="h-3 w-3 text-primary" />
+   585→   585→                  </div>
+   586→   586→                  <span className="text-[11px] font-semibold text-primary/80">
+   587→   587→                    {isRTL ? "المساعد القانوني" : "Legal Assistant"}
+   588→   588→                  </span>
+   589→   589→                </div>
+   590→   590→                <div className="flex items-center gap-2 px-1 py-1">
+   591→   591→                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
+   592→   592→                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
+   593→   593→                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
+   594→   594→                </div>
+   595→   595→              </div>
+   596→   596→            </div>
+   597→   597→          )}
+   598→   598→
+   599→   599→          <div ref={messagesEndRef} />
+   600→   600→        </div>
+   601→   601→
+   602→   602→        {/* ═══ SCROLL TO BOTTOM ═══ */}
+   603→   603→        {showScrollBtn && (
+   604→   604→          <button
+   605→   605→            onClick={scrollToBottom}
+   606→   606→            className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex items-center justify-center h-8 w-8 rounded-full glass shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in"
+   607→   607→          >
+   608→   608→            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+   609→   609→          </button>
+   610→   610→        )}
+   611→   611→
+   612→   612→        {/* ═══════════════════════════════════════════════════
+   613→   613→            INPUT BAR — Elevated, floating, prominent
+   614→   614→            ═══════════════════════════════════════════════════ */}
+   615→   615→        <div className="sticky bottom-0 z-20 pb-4 pt-2 px-5 bg-gradient-to-t from-legal-surface via-legal-surface/95 to-transparent">
+   616→   616→          {/* Lawyer CTA — above input */}
+   617→   617→          {messages.length > 0 && (
+   618→   618→            <div className="flex items-center justify-center mb-3 animate-fade-in">
+   619→   619→              <button className="group flex items-center gap-2 text-[11px] text-muted-foreground hover:text-[var(--legal-amber)] transition-colors duration-200">
+   620→   620→                <Gavel className="h-3 w-3 group-hover:scale-110 transition-transform" />
+   621→   621→                <span>{isRTL ? "تحدث مع محامٍ مرخّص" : "Talk to a licensed lawyer"}</span>
+   622→   622→              </button>
+   623→   623→            </div>
+   624→   624→          )}
+   625→   625→
+   626→   626→          {/* Input container */}
+   627→   627→          <div className="input-glow relative flex items-end gap-2 rounded-2xl bg-legal-surface-elevated border border-border/80 px-3 py-2">
+   628→   628→            <Textarea
+   629→   629→              ref={textareaRef}
+   630→   630→              value={input}
+   631→   631→              onChange={(e) => setInput(e.target.value)}
+   632→   632→              onKeyDown={handleKeyDown}
+   633→   633→              placeholder={
+   634→   634→                isRTL
+   635→   635→                  ? "اسأل سؤالك القانوني..."
+   636→   636→                  : "Ask your legal question..."
+   637→   637→              }
+   638→   638→              disabled={isLoading}
+   639→   639→              rows={1}
+   640→   640→              className="flex-1 resize-none border-0 bg-transparent px-2 py-1.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[36px] max-h-[120px] placeholder:text-muted-foreground/50"
+   641→   641→              style={{
+   642→   642→                height: "auto",
+   643→   643→                overflow: "hidden",
+   644→   644→              }}
+   645→   645→              onInput={(e) => {
+   646→   646→                const target = e.target as HTMLTextAreaElement;
+   647→   647→                target.style.height = "auto";
+   648→   648→                target.style.height = Math.min(target.scrollHeight, 120) + "px";
+   649→   649→              }}
+   650→   650→            />
+   651→   651→            <Button
+   652→   652→              onClick={() => sendMessage()}
+   653→   653→              disabled={!input.trim() || isLoading}
+   654→   654→              size="sm"
+   655→   655→              className="shrink-0 rounded-xl h-9 w-9 p-0 bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.38_0.15_270)] text-white shadow-sm shadow-[oklch(0.35_0.15_270)/0.15] hover:shadow-md hover:shadow-[oklch(0.35_0.15_270)/0.25] disabled:opacity-40 transition-all duration-200"
+   656→   656→            >
+   657→   657→              {isLoading ? (
+   658→   658→                <Loader2 className="h-4 w-4 animate-spin" />
+   659→   659→              ) : (
+   660→   660→                <Send className="h-4 w-4" />
+   661→   661→              )}
+   662→   662→            </Button>
+   663→   663→          </div>
+   664→   664→
+   665→   665→          {/* Tiny footer note */}
+   666→   666→          <p className="text-center text-[10px] text-muted-foreground/40 mt-2">
+   667→   667→            {isRTL
+   668→   668→              ? "ذكاء اصطناعي — تحقق من المعلومات دائماً"
+   669→   669→              : "AI-generated — always verify information"}
+   670→   670→          </p>
+   671→   671→        </div>
+   672→   672→      </main>
+   673→   673→
+   674→   674→      {/* ═══ OVERLAYS ═══ */}
+   675→   675→      <PrivacyNoticeDialog
+   676→   676→        open={showPrivacy}
+   677→   677→        onOpenChange={setShowPrivacy}
+   678→   678→        language={language}
+   679→   679→      />
+   680→   680→      <KnowledgeLibrary
+   681→   681→        open={showLibrary}
+   682→   682→        onOpenChange={setShowLibrary}
+   683→   683→        language={language}
+   684→   684→        onSelectTopic={(topic) => {
+   685→   685→          const query = isRTL ? topic.titleAr : topic.titleEn;
+   686→   686→          sendMessage(query);
+   687→   687→          setShowLibrary(false);
+   688→   688→        }}
+   689→   689→      />
+   690→   690→    </div>
+   691→   691→  );
+   692→   692→}
+   693→   693→

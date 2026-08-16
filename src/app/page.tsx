@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -30,9 +29,8 @@ import {
   Lock,
   BookOpen,
   ImageIcon,
-  Moon,
-  Sun,
   ArrowDown,
+  MessageSquare,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import PrivacyNoticeDialog from "@/components/privacy-notice-dialog";
@@ -55,74 +53,83 @@ interface TopicButton {
   labelEn: string;
   queryAr: string;
   queryEn: string;
-  color: string;
+  gradient: string;
+  iconBg: string;
 }
 
 /* ───────── Constants ───────── */
 const TOPICS: TopicButton[] = [
   {
-    icon: <Briefcase className="h-4 w-4" />,
+    icon: <Briefcase className="h-5 w-5" />,
     labelAr: "قانون العمل",
     labelEn: "Labor Law",
     queryAr: "أريد معرفة حقوقي في قانون العمل الأردني",
     queryEn: "I want to know my rights under Jordanian labor law",
-    color: "from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400",
+    gradient: "from-amber-500/8 to-orange-500/5",
+    iconBg: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
   },
   {
-    icon: <Home className="h-4 w-4" />,
+    icon: <Home className="h-5 w-5" />,
     labelAr: "الإيجار والعقار",
     labelEn: "Rent & Real Estate",
     queryAr: "ما هي حقوقي ك مستأجر في الأردن؟",
     queryEn: "What are my rights as a tenant in Jordan?",
-    color: "from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400",
+    gradient: "from-emerald-500/8 to-teal-500/5",
+    iconBg: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
   {
-    icon: <Users className="h-4 w-4" />,
+    icon: <Users className="h-5 w-5" />,
     labelAr: "القانون الأسري",
     labelEn: "Family Law",
     queryAr: "أسئلة حول القانون الأسري في الأردن",
     queryEn: "Questions about family law in Jordan",
-    color: "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400",
+    gradient: "from-rose-500/8 to-pink-500/5",
+    iconBg: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
   },
   {
-    icon: <CreditCard className="h-4 w-4" />,
+    icon: <CreditCard className="h-5 w-5" />,
     labelAr: "الديون والتنفيذ",
     labelEn: "Debt & Enforcement",
     queryAr: "كيف أتعامل مع ديون وقيود تنفيذية؟",
     queryEn: "How do I deal with debts and enforcement actions?",
-    color: "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400",
+    gradient: "from-yellow-500/8 to-amber-500/5",
+    iconBg: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
   },
   {
-    icon: <Car className="h-4 w-4" />,
+    icon: <Car className="h-5 w-5" />,
     labelAr: "الحوادث والتعويض",
     labelEn: "Accidents & Compensation",
     queryAr: "ما هي إجراءات التعويض عن حادث مروري؟",
     queryEn: "What are the procedures for traffic accident compensation?",
-    color: "from-orange-500/10 to-red-500/10 text-orange-600 dark:text-orange-400",
+    gradient: "from-orange-500/8 to-red-500/5",
+    iconBg: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
   },
   {
-    icon: <Shield className="h-4 w-4" />,
+    icon: <Shield className="h-5 w-5" />,
     labelAr: "الجرم الإلكتروني",
     labelEn: "Cybercrime",
     queryAr: "كيف أحمي نفسي من الجرائم الإلكترونية؟",
     queryEn: "How do I protect myself from cybercrime?",
-    color: "from-violet-500/10 to-purple-500/10 text-violet-600 dark:text-violet-400",
+    gradient: "from-violet-500/8 to-purple-500/5",
+    iconBg: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
   },
   {
-    icon: <Building2 className="h-4 w-4" />,
+    icon: <Building2 className="h-5 w-5" />,
     labelAr: "المؤسسات الصغيرة",
     labelEn: "Small Business",
     queryAr: "ما هي خطوات تأسيس شركة في الأردن؟",
     queryEn: "What are the steps to register a company in Jordan?",
-    color: "from-cyan-500/10 to-sky-500/10 text-cyan-600 dark:text-cyan-400",
+    gradient: "from-sky-500/8 to-cyan-500/5",
+    iconBg: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
   },
   {
-    icon: <Gavel className="h-4 w-4" />,
+    icon: <Gavel className="h-5 w-5" />,
     labelAr: "إجراءات المحاكم",
     labelEn: "Court Procedures",
     queryAr: "ما هي خطوات رفع دعوى أمام المحاكم الأردنية؟",
     queryEn: "What are the steps to file a case in Jordanian courts?",
-    color: "from-indigo-500/10 to-blue-500/10 text-indigo-600 dark:text-indigo-400",
+    gradient: "from-stone-500/8 to-neutral-500/5",
+    iconBg: "bg-stone-100 text-stone-700 dark:bg-stone-800/40 dark:text-stone-300",
   },
 ];
 
@@ -298,29 +305,31 @@ export default function LegalChatPage() {
 
   /* ── Render ── */
   return (
-    <div className="h-screen flex flex-col bg-legal-surface">
+    <div className="h-screen flex flex-col bg-legal-surface noise-overlay">
       {/* ═══════════════════════════════════════════════════
-          HEADER — Minimal, clean, glass
+          HEADER — Clean glass bar with warm tones
           ═══════════════════════════════════════════════════ */}
       <header className="glass sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-[60px] flex items-center justify-between">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white shadow-lg shadow-[oklch(0.35_0.15_270)/0.15]">
-              <Scale className="h-4.5 w-4.5" strokeWidth={2.2} />
+            <div className="relative flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-[oklch(0.35_0.08_50)] to-[oklch(0.28_0.06_40)] text-white shadow-lg shadow-[oklch(0.28_0.06_40)/0.2]">
+              <Scale className="h-5 w-5" strokeWidth={2} />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-[15px] font-semibold leading-tight tracking-tight text-foreground">
+              <h1 className="text-[15px] font-bold leading-tight tracking-tight text-foreground">
                 {isRTL ? "المساعد القانوني" : "Legal Assistant"}
               </h1>
-              <p className="text-[11px] text-muted-foreground leading-none mt-0.5">
-                {isRTL ? "المملكة الأردنية الهاشمية" : "Hashemite Kingdom of Jordan"}
+              <p className="text-[11px] text-muted-foreground leading-none mt-0.5 font-medium">
+                {isRTL
+                  ? "المملكة الأردنية الهاشمية"
+                  : "Hashemite Kingdom of Jordan"}
               </p>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1">
+          {/* Actions — pill group */}
+          <div className="flex items-center gap-0.5 bg-legal-surface-elevated rounded-full p-1 border border-border/50 shadow-sm">
             <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -328,7 +337,7 @@ export default function LegalChatPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setLanguage(isRTL ? "en" : "ar")}
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-legal-sand-muted/60"
                   >
                     <Globe className="h-4 w-4" />
                   </Button>
@@ -346,7 +355,7 @@ export default function LegalChatPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowLibrary(true)}
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-legal-sand-muted/60"
                   >
                     <BookOpen className="h-4 w-4" />
                   </Button>
@@ -364,7 +373,7 @@ export default function LegalChatPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowPrivacy(true)}
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-legal-sand-muted/60"
                   >
                     <Lock className="h-4 w-4" />
                   </Button>
@@ -376,23 +385,26 @@ export default function LegalChatPage() {
             </TooltipProvider>
 
             {messages.length > 0 && (
-              <TooltipProvider delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={resetChat}
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">
-                    {isRTL ? "محادثة جديدة" : "New chat"}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <>
+                <div className="h-5 w-px bg-border/50 mx-1" />
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={resetChat}
+                        className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-legal-sand-muted/60"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      {isRTL ? "محادثة جديدة" : "New chat"}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </>
             )}
           </div>
         </div>
@@ -401,11 +413,11 @@ export default function LegalChatPage() {
       {/* ═══════════════════════════════════════════════════
           MAIN CONTENT
           ═══════════════════════════════════════════════════ */}
-      <main className="flex-1 flex flex-col max-w-4xl w-full mx-auto relative overflow-hidden">
-        {/* Disclaimer — subtle top bar */}
-        <div className="px-5 pt-3 animate-fade-in">
-          <div className="disclaimer-gradient flex items-start gap-2.5 rounded-xl px-3.5 py-2.5">
-            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[var(--legal-amber)]" />
+      <main className="flex-1 flex flex-col max-w-3xl w-full mx-auto relative overflow-hidden">
+        {/* Disclaimer — subtle bar */}
+        <div className="px-4 sm:px-6 pt-3 animate-fade-in">
+          <div className="disclaimer-gradient flex items-center gap-2 rounded-xl px-3.5 py-2">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-[var(--legal-terracotta)]" />
             <p className="text-[11px] leading-relaxed text-muted-foreground">
               {isRTL ? DISCLAIMER_AR : DISCLAIMER_EN}
             </p>
@@ -415,47 +427,49 @@ export default function LegalChatPage() {
         {/* Messages / Welcome */}
         <div
           ref={scrollAreaRef}
-          className="flex-1 overflow-y-auto px-5 py-4 chat-scroll"
+          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 chat-scroll"
           style={{ minHeight: 0 }}
         >
           {/* ═══ WELCOME SCREEN ═══ */}
           {messages.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-center py-8 gap-8 animate-fade-in">
+            <div className="flex flex-col items-center justify-center py-6 gap-10 animate-fade-in">
               {/* Hero area */}
-              <div className="text-center space-y-4 max-w-lg">
-                {/* Animated icon */}
-                <div className="mx-auto relative">
-                  <div className="flex items-center justify-center h-20 w-20 rounded-2xl bg-gradient-to-br from-[oklch(0.45_0.18_270)/0.08] to-[oklch(0.75_0.14_75)/0.06] ring-1 ring-[oklch(0.45_0.18_270)/0.08]">
-                    <Sparkles className="h-9 w-9 text-primary" strokeWidth={1.5} />
+              <div className="text-center space-y-5 max-w-md">
+                {/* Large animated icon */}
+                <div className="mx-auto relative hero-glow">
+                  <div className="flex items-center justify-center h-[88px] w-[88px] rounded-3xl bg-gradient-to-br from-[oklch(0.40_0.08_50)/0.10] to-[oklch(0.65_0.14_45)/0.08] ring-1 ring-[oklch(0.40_0.08_50)/0.08] shadow-xl shadow-[oklch(0.40_0.08_50)/0.06]">
+                    <Sparkles className="h-10 w-10 text-[var(--legal-terracotta)]" strokeWidth={1.3} />
                   </div>
-                  <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[oklch(0.55_0.18_270)/0.04] to-transparent blur-xl -z-10" />
                 </div>
 
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                  {isRTL
-                    ? "مرحباً بك"
-                    : "Welcome"}
-                </h2>
-                <p className="text-[15px] text-muted-foreground leading-relaxed max-w-sm mx-auto">
-                  {isRTL
-                    ? "يمكنني مساعدتك في فهم القوانين والإجراءات القانونية في الأردن. اختر موضوعاً أو اطرح سؤالك."
-                    : "I can help you understand Jordanian laws and legal procedures. Choose a topic or ask directly."}
-                </p>
+                <div className="space-y-2">
+                  <h2 className="text-[28px] sm:text-3xl font-bold tracking-tight text-foreground leading-tight">
+                    {isRTL ? "مرحباً بك" : "Welcome"}
+                  </h2>
+                  <p className="text-[15px] text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                    {isRTL
+                      ? "يمكنني مساعدتك في فهم القوانين والإجراءات القانونية في الأردن. اختر موضوعاً أو اطرح سؤالك مباشرة."
+                      : "I can help you understand Jordanian laws and legal procedures. Choose a topic or ask directly."}
+                  </p>
+                </div>
               </div>
 
-              {/* Topic grid — horizontal scroll on mobile, grid on desktop */}
+              {/* Topic grid */}
               <div className="w-full max-w-2xl">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60 mb-3 px-1">
-                  {isRTL ? "استكشف المواضيع" : "Explore topics"}
+                <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/50 mb-4 px-1">
+                  {isRTL ? "استكشف المواضيع" : "Explore Topics"}
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {TOPICS.map((topic) => (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {TOPICS.map((topic, idx) => (
                     <button
                       key={topic.labelEn}
                       onClick={() => handleTopicClick(topic)}
-                      className="topic-card group relative flex flex-col items-center gap-2.5 rounded-2xl bg-legal-surface-elevated border border-border/50 px-3 py-4 text-center hover:border-primary/20 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97]"
+                      className="topic-card group relative flex flex-col items-center gap-3 rounded-2xl bg-legal-surface-elevated border border-border/40 px-4 py-5 text-center transition-all duration-250 active:scale-[0.97]"
+                      style={{ animationDelay: `${idx * 60}ms` }}
                     >
-                      <span className={`flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br ${topic.color} shrink-0 transition-transform duration-200 group-hover:scale-110`}>
+                      <span
+                        className={`flex items-center justify-center h-12 w-12 rounded-xl ${topic.iconBg} shrink-0 transition-transform duration-250 group-hover:scale-110 group-hover:rotate-3`}
+                      >
                         {topic.icon}
                       </span>
                       <span className="text-[13px] font-medium leading-tight text-foreground">
@@ -467,7 +481,7 @@ export default function LegalChatPage() {
               </div>
 
               {/* Quick suggestion chips */}
-              <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg">
+              <div className="flex flex-wrap items-center justify-center gap-2 max-w-md">
                 {[
                   { ar: "ما حقوقي كموظف؟", en: "What are my employee rights?" },
                   { ar: "كيف أرفع دعوى؟", en: "How do I file a lawsuit?" },
@@ -476,7 +490,7 @@ export default function LegalChatPage() {
                   <button
                     key={q.en}
                     onClick={() => sendMessage(isRTL ? q.ar : q.en)}
-                    className="text-xs text-muted-foreground bg-legal-surface-elevated border border-border/50 rounded-full px-3.5 py-1.5 hover:border-primary/20 hover:text-foreground transition-all duration-150"
+                    className="text-xs text-muted-foreground bg-legal-surface-elevated border border-border/40 rounded-full px-4 py-2 hover:border-[var(--legal-terracotta)]/30 hover:text-foreground hover:bg-legal-surface-overlay transition-all duration-200 hover:shadow-sm"
                   >
                     {isRTL ? q.ar : q.en}
                   </button>
@@ -489,26 +503,26 @@ export default function LegalChatPage() {
           {messages.map((msg, idx) => (
             <div
               key={msg.id}
-              className={`flex mb-5 animate-fade-in-up ${
+              className={`flex mb-6 animate-fade-in-up ${
                 msg.role === "user" ? "justify-end" : "justify-start"
               }`}
               style={{ animationDelay: `${Math.min(idx * 0.05, 0.2)}s` }}
             >
               <div
-                className={`max-w-[88%] sm:max-w-[78%] ${
+                className={`max-w-[90%] sm:max-w-[80%] ${
                   msg.role === "user" ? "msg-user" : "msg-assistant"
-                } px-5 py-3.5`}
+                } px-5 py-4`}
               >
-                {/* Assistant header */}
+                {/* Assistant header — refined */}
                 {msg.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-border/30">
-                    <div className="flex items-center justify-center h-5 w-5 rounded-md bg-primary/8">
-                      <Scale className="h-3 w-3 text-primary" />
+                  <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-border/25">
+                    <div className="flex items-center justify-center h-6 w-6 rounded-lg bg-[var(--legal-cedar-muted)]">
+                      <Scale className="h-3.5 w-3.5 text-[var(--legal-cedar)]" />
                     </div>
-                    <span className="text-[11px] font-semibold text-primary/80">
+                    <span className="text-[11px] font-semibold text-[var(--legal-cedar)]">
                       {isRTL ? "المساعد القانوني" : "Legal Assistant"}
                     </span>
-                    <span className="text-[10px] text-muted-foreground/50">
+                    <span className="text-[10px] text-muted-foreground/40 ml-auto">
                       {msg.timestamp.toLocaleTimeString(isRTL ? "ar-JO" : "en-US", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -530,7 +544,7 @@ export default function LegalChatPage() {
 
                 {/* User timestamp */}
                 {msg.role === "user" && (
-                  <p className="text-[10px] mt-2 text-white/40">
+                  <p className="text-[10px] mt-2 text-white/35 text-end">
                     {msg.timestamp.toLocaleTimeString(isRTL ? "ar-JO" : "en-US", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -540,12 +554,12 @@ export default function LegalChatPage() {
 
                 {/* ── Visualize Answer Button ── */}
                 {msg.role === "assistant" && (
-                  <div className="mt-3 pt-2.5 border-t border-border/20">
+                  <div className="mt-3 pt-3 border-t border-border/20">
                     <button
                       type="button"
                       disabled={msg.visualizing}
                       onClick={() => handleVisualize(msg.id, msg.content)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[oklch(0.40_0.12_165)] to-[oklch(0.35_0.15_270)] px-3.5 py-2 text-[13px] font-medium text-white shadow-sm shadow-[oklch(0.35_0.15_270)/0.1] transition-all duration-200 hover:shadow-md hover:shadow-[oklch(0.35_0.15_270)/0.15] disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]"
+                      className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[var(--legal-terracotta)] to-[oklch(0.55_0.12_50)] px-4 py-2.5 text-[13px] font-medium text-white shadow-sm shadow-[var(--legal-terracotta)]/15 transition-all duration-200 hover:shadow-lg hover:shadow-[var(--legal-terracotta)]/20 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 active:scale-[0.98]"
                     >
                       {msg.visualizing ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -563,7 +577,7 @@ export default function LegalChatPage() {
                       </span>
                     </button>
                     {msg.visualizationError && (
-                      <p className="mt-1.5 text-[11px] text-red-500/80">
+                      <p className="mt-2 text-[11px] text-red-500/70">
                         {isRTL
                           ? "تعذر الإنشاء. حاول مرة أخرى."
                           : "Unable to create. Please try again."}
@@ -577,20 +591,20 @@ export default function LegalChatPage() {
 
           {/* ═══ TYPING INDICATOR ═══ */}
           {isTyping && (
-            <div className="flex mb-5 justify-start animate-fade-in">
-              <div className="msg-assistant px-5 py-3.5">
-                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/30">
-                  <div className="flex items-center justify-center h-5 w-5 rounded-md bg-primary/8">
-                    <Scale className="h-3 w-3 text-primary" />
+            <div className="flex mb-6 justify-start animate-fade-in">
+              <div className="msg-assistant px-5 py-4">
+                <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-border/25">
+                  <div className="flex items-center justify-center h-6 w-6 rounded-lg bg-[var(--legal-cedar-muted)]">
+                    <Scale className="h-3.5 w-3.5 text-[var(--legal-cedar)]" />
                   </div>
-                  <span className="text-[11px] font-semibold text-primary/80">
+                  <span className="text-[11px] font-semibold text-[var(--legal-cedar)]">
                     {isRTL ? "المساعد القانوني" : "Legal Assistant"}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 px-1 py-1">
-                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
-                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
-                  <span className="typing-dot h-2 w-2 rounded-full bg-primary/40" />
+                <div className="flex items-center gap-2.5 px-1 py-1">
+                  <span className="typing-dot h-2 w-2 rounded-full bg-[var(--legal-terracotta)]/40" />
+                  <span className="typing-dot h-2 w-2 rounded-full bg-[var(--legal-terracotta)]/40" />
+                  <span className="typing-dot h-2 w-2 rounded-full bg-[var(--legal-terracotta)]/40" />
                 </div>
               </div>
             </div>
@@ -603,28 +617,30 @@ export default function LegalChatPage() {
         {showScrollBtn && (
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex items-center justify-center h-8 w-8 rounded-full glass shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in"
+            className="absolute bottom-36 left-1/2 -translate-x-1/2 z-10 flex items-center justify-center h-9 w-9 rounded-full glass shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in"
           >
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </button>
         )}
 
         {/* ═══════════════════════════════════════════════════
-            INPUT BAR — Elevated, floating, prominent
+            INPUT BAR — Warm, elevated, floating
             ═══════════════════════════════════════════════════ */}
-        <div className="sticky bottom-0 z-20 pb-4 pt-2 px-5 bg-gradient-to-t from-legal-surface via-legal-surface/95 to-transparent">
-          {/* Lawyer CTA — above input */}
+        <div className="sticky bottom-0 z-20 pb-4 pt-2 px-4 sm:px-6 bg-gradient-to-t from-legal-surface via-legal-surface/97 to-transparent">
+          {/* Lawyer CTA */}
           {messages.length > 0 && (
             <div className="flex items-center justify-center mb-3 animate-fade-in">
-              <button className="group flex items-center gap-2 text-[11px] text-muted-foreground hover:text-[var(--legal-amber)] transition-colors duration-200">
+              <button className="group flex items-center gap-2 text-[11px] text-muted-foreground hover:text-[var(--legal-terracotta)] transition-colors duration-200">
                 <Gavel className="h-3 w-3 group-hover:scale-110 transition-transform" />
-                <span>{isRTL ? "تحدث مع محامٍ مرخّص" : "Talk to a licensed lawyer"}</span>
+                <span>
+                  {isRTL ? "تحدث مع محامٍ مرخّص" : "Talk to a licensed lawyer"}
+                </span>
               </button>
             </div>
           )}
 
           {/* Input container */}
-          <div className="input-glow relative flex items-end gap-2 rounded-2xl bg-legal-surface-elevated border border-border/80 px-3 py-2">
+          <div className="input-glow relative flex items-end gap-2.5 rounded-2xl bg-legal-surface-elevated border border-border/70 px-3.5 py-2.5 shadow-lg shadow-black/[0.03]">
             <Textarea
               ref={textareaRef}
               value={input}
@@ -637,7 +653,7 @@ export default function LegalChatPage() {
               }
               disabled={isLoading}
               rows={1}
-              className="flex-1 resize-none border-0 bg-transparent px-2 py-1.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[36px] max-h-[120px] placeholder:text-muted-foreground/50"
+              className="flex-1 resize-none border-0 bg-transparent px-2 py-1.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[36px] max-h-[120px] placeholder:text-muted-foreground/40"
               style={{
                 height: "auto",
                 overflow: "hidden",
@@ -652,7 +668,7 @@ export default function LegalChatPage() {
               onClick={() => sendMessage()}
               disabled={!input.trim() || isLoading}
               size="sm"
-              className="shrink-0 rounded-xl h-9 w-9 p-0 bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.38_0.15_270)] text-white shadow-sm shadow-[oklch(0.35_0.15_270)/0.15] hover:shadow-md hover:shadow-[oklch(0.35_0.15_270)/0.25] disabled:opacity-40 transition-all duration-200"
+              className="shrink-0 rounded-xl h-10 w-10 p-0 bg-gradient-to-br from-[var(--legal-terracotta)] to-[oklch(0.50_0.10_50)] text-white shadow-md shadow-[var(--legal-terracotta)]/15 hover:shadow-lg hover:shadow-[var(--legal-terracotta)]/25 disabled:opacity-35 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -663,7 +679,7 @@ export default function LegalChatPage() {
           </div>
 
           {/* Tiny footer note */}
-          <p className="text-center text-[10px] text-muted-foreground/40 mt-2">
+          <p className="text-center text-[10px] text-muted-foreground/35 mt-2.5 font-medium">
             {isRTL
               ? "ذكاء اصطناعي — تحقق من المعلومات دائماً"
               : "AI-generated — always verify information"}
