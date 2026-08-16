@@ -141,3 +141,47 @@ Stage Summary:
 - Full Arabic RTL + English LTR support in infographic rendering
 - Legal safety: source validation, high-risk keyword detection, disclaimer preservation, needs_review flagging
 - 25 unit tests passing, build clean, README documented
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Fundamental UI/UX redesign of the entire platform
+
+Work Log:
+- Audited all existing UI files: globals.css, layout.tsx, page.tsx, knowledge-library.tsx, privacy-notice-dialog.tsx, visualization pages
+- Designed new design system: Deep indigo/slate palette + warm amber accent (replacing teal/gold), glassmorphism, premium spacing, animated transitions
+- Rewrote globals.css from scratch:
+  - New color system: warm slate base (oklch hue 265) + deep indigo primary (hue 270) + warm amber accent (hue 75)
+  - New brand tokens: --legal-amber, --legal-amber-muted, --legal-indigo, --legal-indigo-muted, --legal-surface, --legal-surface-elevated
+  - New animations: typing-pulse (smooth scale), fade-in-up, fade-in, slide-in-bottom
+  - New component classes: .glass (glassmorphism), .msg-user / .msg-assistant (message bubbles), .topic-card (gradient hover), .input-glow (focus ring), .disclaimer-gradient, .prose-legal (legal typography)
+  - Full dark mode support with inverted oklch values
+  - Custom scrollbar, RTL support, selection styling, focus ring system
+- Updated layout.tsx with font-feature-settings and smooth scrolling
+- Completely rewrote page.tsx with new UX:
+  - Glassmorphism header (`.glass` class, blur + saturate)
+  - New welcome screen: centered Sparkles icon with gradient glow, topic grid with per-topic color gradients (blue, emerald, rose, amber, orange, violet, cyan, indigo), quick suggestion chips
+  - New message bubbles: `.msg-user` (indigo gradient) and `.msg-assistant` (elevated surface) with proper RTL border-radius flipping
+  - New floating input bar: gradient fade from surface, elevated container with `.input-glow` focus shadow, gradient send button
+  - Animated lawyer CTA button, minimal footer note
+  - Scroll-to-bottom button uses glass effect
+- Redesigned knowledge-library.tsx via subagent:
+  - bg-legal-surface-elevated for all surfaces
+  - topic-card class for practice area and topic cards with gradient hover
+  - New indigo/amber badge system for urgency and confidence
+  - prose-legal for content typography
+  - Rounded-xl/2xl corners throughout
+- Redesigned privacy-notice-dialog.tsx via subagent:
+  - Top accent gradient bar on dialog
+  - Individual rounded-xl section cards
+  - Indigo gradient number badges
+  - Amber accent for contact section
+  - animate-slide-in-bottom on dialog, animate-fade-in on sections
+- Updated visualization preview page with new design tokens
+- Build verified: compiled successfully with zero errors, all routes working
+
+Stage Summary:
+- Complete UI/UX redesign: new design system, new color palette, new component patterns
+- 6 files rewritten with entirely new visual design
+- Key design principles: glassmorphism, gradient accents, animated transitions, premium spacing, legal typography
+- Build clean: zero errors, all 12 routes compiling correctly

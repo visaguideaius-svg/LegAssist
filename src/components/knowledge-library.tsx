@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen,
@@ -29,7 +28,6 @@ import {
   Scale,
   AlertTriangle,
   UserCheck,
-  Loader2,
 } from "lucide-react";
 
 /* ───────── Types ───────── */
@@ -101,9 +99,9 @@ const PRACTICE_ICONS: Record<string, React.ReactNode> = {
 };
 
 const URGENCY_COLORS: Record<string, string> = {
-  low: "bg-emerald-100 text-emerald-800",
-  medium: "bg-amber-100 text-amber-800",
-  high: "bg-red-100 text-red-800",
+  low: "bg-legal-amber-muted/60 text-legal-amber",
+  medium: "bg-legal-amber-muted text-legal-amber",
+  high: "bg-legal-amber/15 text-legal-amber",
 };
 
 /* ───────── Props ───────── */
@@ -174,10 +172,10 @@ export default function KnowledgeLibrary({
   };
 
   const getSteps = (content: TopicContent | null) => {
-    if (!content) return [];
+    if (!content) return null;
     if (content.steps_employee) return { labelAr: "خطوات الموظف", labelEn: "Employee Steps", steps: content.steps_employee };
     if (content.steps_tenant) return { labelAr: "خطوات المستأجر", labelEn: "Tenant Steps", steps: content.steps_tenant };
-    return { labelAr: "خطوات", labelEn: "Steps", steps: [] };
+    return { labelAr: "خطوات", labelEn: "Steps", steps: [] as string[] };
   };
 
   const getSteps2 = (content: TopicContent | null) => {
@@ -197,40 +195,43 @@ export default function KnowledgeLibrary({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side={isRTL ? "right" : "left"}
-          className="w-full sm:max-w-lg p-0 flex flex-col"
+          className="w-full sm:max-w-lg p-0 flex flex-col bg-legal-surface-elevated"
         >
           {/* Header */}
-          <div className="border-b border-border px-4 py-3 shrink-0">
+          <div className="border-b border-border/50 px-5 py-4 shrink-0">
             <SheetHeader className="text-start space-y-0">
-              <div className="flex items-center gap-2 mb-1">
-                <button
-                  onClick={handleBack}
-                  className="flex items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
-                >
-                  {isRTL ? (
-                    <ChevronRight className="h-4 w-4" />
-                  ) : (
-                    <ChevronLeft className="h-4 w-4" />
-                  )}
-                </button>
-                <SheetTitle className="text-sm font-bold leading-tight">
-                  {isRTL ? selectedTopic.titleAr : selectedTopic.titleEn}
-                </SheetTitle>
-              </div>
-              <SheetDescription className="text-[11px]">
-                {selectedTopic.practiceArea
-                  ? isRTL
-                    ? selectedTopic.practiceArea.titleAr
-                    : selectedTopic.practiceArea.titleEn
-                  : ""}
+              {/* Minimal back navigation */}
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mb-2 group"
+              >
+                {isRTL ? (
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                ) : (
+                  <ChevronLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+                )}
+                <span>{isRTL ? "رجوع" : "Back"}</span>
+              </button>
+              <SheetTitle className="text-base font-semibold leading-tight text-primary">
+                {isRTL ? selectedTopic.titleAr : selectedTopic.titleEn}
+              </SheetTitle>
+              <SheetDescription className="text-xs text-muted-foreground mt-1.5 flex items-center gap-2">
+                <span>
+                  {selectedTopic.practiceArea
+                    ? isRTL
+                      ? selectedTopic.practiceArea.titleAr
+                      : selectedTopic.practiceArea.titleEn
+                    : ""}
+                </span>
                 {selectedTopic.confidenceLevel && (
                   <Badge
                     variant="secondary"
-                    className={`ml-2 text-[10px] px-1.5 py-0 ${
+                    className={`text-[10px] px-1.5 py-0 rounded-full ${
                       selectedTopic.confidenceLevel === "high"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
+                        ? "bg-legal-indigo-muted text-legal-indigo"
+                        : "bg-legal-amber-muted text-legal-amber"
+                    }`
+                  }
                   >
                     {isRTL
                       ? selectedTopic.confidenceLevel === "high"
@@ -245,11 +246,11 @@ export default function KnowledgeLibrary({
 
           {/* Content */}
           <ScrollArea className="flex-1">
-            <div className="px-4 py-4 space-y-4">
+            <div className="px-5 py-5 space-y-5 animate-fade-in">
               {/* Explanation */}
               {content && (
-                <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
-                  <p className="text-sm leading-relaxed">
+                <div className="rounded-2xl bg-legal-indigo-muted/40 p-4 shadow-sm">
+                  <p className="text-sm leading-relaxed prose-legal">
                     {isRTL ? content.explanation_ar : content.explanation_en}
                   </p>
                 </div>
@@ -258,18 +259,18 @@ export default function KnowledgeLibrary({
               {/* Key Facts */}
               {content?.key_facts && content.key_facts.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <FileCheck className="h-3.5 w-3.5 text-primary" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <FileCheck className="h-3.5 w-3.5" />
                     {isRTL ? "حقائق رئيسية" : "Key Facts"}
                   </h4>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1.5">
                     {content.key_facts.map((fact, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
-                        {fact}
+                        <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
+                        <span className="prose-legal">{fact}</span>
                       </li>
                     ))}
                   </ul>
@@ -279,20 +280,20 @@ export default function KnowledgeLibrary({
               {/* Steps 1 */}
               {steps1 && steps1.steps.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <UserCheck className="h-3.5 w-3.5 text-primary" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <UserCheck className="h-3.5 w-3.5" />
                     {isRTL ? steps1.labelAr : steps1.labelEn}
                   </h4>
-                  <ol className="space-y-1.5">
+                  <ol className="space-y-2">
                     {steps1.steps.map((step, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                        <span className="shrink-0 flex items-center justify-center h-5 w-5 rounded-full bg-legal-indigo-muted text-legal-indigo text-[10px] font-bold">
                           {i + 1}
                         </span>
-                        {step}
+                        <span className="prose-legal">{step}</span>
                       </li>
                     ))}
                   </ol>
@@ -302,20 +303,20 @@ export default function KnowledgeLibrary({
               {/* Steps 2 */}
               {steps2 && steps2.steps.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <UserCheck className="h-3.5 w-3.5 text-primary" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <UserCheck className="h-3.5 w-3.5" />
                     {isRTL ? steps2.labelAr : steps2.labelEn}
                   </h4>
-                  <ol className="space-y-1.5">
+                  <ol className="space-y-2">
                     {steps2.steps.map((step, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                        <span className="shrink-0 flex items-center justify-center h-5 w-5 rounded-full bg-legal-indigo-muted text-legal-indigo text-[10px] font-bold">
                           {i + 1}
                         </span>
-                        {step}
+                        <span className="prose-legal">{step}</span>
                       </li>
                     ))}
                   </ol>
@@ -325,18 +326,18 @@ export default function KnowledgeLibrary({
               {/* Documents */}
               {content?.documents_to_keep && content.documents_to_keep.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <FileCheck className="h-3.5 w-3.5 text-primary" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <FileCheck className="h-3.5 w-3.5" />
                     {isRTL ? "مستندات يجب الاحتفاظ بها" : "Documents to Keep"}
                   </h4>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1.5">
                     {content.documents_to_keep.map((doc, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                        {doc}
+                        <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-amber" />
+                        <span className="prose-legal">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -346,18 +347,18 @@ export default function KnowledgeLibrary({
               {/* Deadlines */}
               {content?.deadlines && content.deadlines.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-amber-600" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <Clock className="h-3.5 w-3.5 text-legal-amber" />
                     {isRTL ? "مواعيد مهمة" : "Important Deadlines"}
                   </h4>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1.5">
                     {content.deadlines.map((dl, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                        {dl}
+                        <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-amber" />
+                        <span className="prose-legal">{dl}</span>
                       </li>
                     ))}
                   </ul>
@@ -366,19 +367,19 @@ export default function KnowledgeLibrary({
 
               {/* When to see a lawyer */}
               {content?.when_to_see_lawyer && content.when_to_see_lawyer.length > 0 && (
-                <div className="rounded-lg border border-amber-300/50 bg-amber-50/50 p-3">
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5 text-amber-800">
+                <div className="rounded-2xl bg-legal-amber-muted/50 p-4 shadow-sm">
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-legal-amber">
                     <AlertTriangle className="h-3.5 w-3.5" />
                     {isRTL ? "متى تحتاج إلى محامٍ" : "When to See a Lawyer"}
                   </h4>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1.5">
                     {content.when_to_see_lawyer.map((item, i) => (
                       <li
                         key={i}
-                        className="text-xs text-foreground/80 flex items-start gap-2"
+                        className="text-xs text-foreground/80 flex items-start gap-2.5"
                       >
-                        <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-amber-600" />
-                        {item}
+                        <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-amber" />
+                        <span className="prose-legal">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -388,17 +389,17 @@ export default function KnowledgeLibrary({
               {/* Legal Sources */}
               {selectedTopic.legalSources.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-                    <Scale className="h-3.5 w-3.5 text-primary" />
+                  <h4 className="text-xs font-semibold mb-2.5 flex items-center gap-1.5 text-primary">
+                    <Scale className="h-3.5 w-3.5" />
                     {isRTL ? "المصادر القانونية" : "Legal Sources"}
                   </h4>
                   <div className="space-y-2">
                     {selectedTopic.legalSources.map((src, i) => (
                       <div
                         key={i}
-                        className="rounded-lg border border-border p-2.5 text-xs"
+                        className="rounded-xl border border-border/50 p-3 text-xs shadow-sm bg-legal-surface-elevated"
                       >
-                        <p className="font-medium">
+                        <p className="font-medium text-foreground">
                           {isRTL ? src.titleAr : src.titleEn}
                         </p>
                         <p className="text-muted-foreground mt-0.5">
@@ -418,8 +419,8 @@ export default function KnowledgeLibrary({
 
               {/* Disclaimer */}
               {content && (
-                <div className="rounded-lg border border-[var(--legal-gold)]/30 bg-[var(--legal-gold-light)]/30 p-3">
-                  <p className="text-[11px] text-foreground/70 leading-relaxed">
+                <div className="disclaimer-gradient rounded-2xl p-4">
+                  <p className="text-[11px] text-foreground/60 leading-relaxed prose-legal">
                     {isRTL ? content.disclaimer_ar : content.disclaimer_en}
                   </p>
                 </div>
@@ -436,16 +437,16 @@ export default function KnowledgeLibrary({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side={isRTL ? "right" : "left"}
-        className="w-full sm:max-w-md p-0 flex flex-col"
+        className="w-full sm:max-w-md p-0 flex flex-col bg-legal-surface-elevated"
       >
         {/* Header */}
-        <div className="border-b border-border px-4 py-3 shrink-0">
-          <SheetHeader className="text-start space-y-0.5">
-            <SheetTitle className="text-sm font-bold flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-primary" />
+        <div className="border-b border-border/50 px-5 py-4 shrink-0">
+          <SheetHeader className="text-start space-y-1">
+            <SheetTitle className="text-sm font-semibold flex items-center gap-2 text-primary">
+              <BookOpen className="h-4 w-4" />
               {isRTL ? "مكتبة المعرفة القانونية" : "Legal Knowledge Library"}
             </SheetTitle>
-            <SheetDescription className="text-[11px]">
+            <SheetDescription className="text-xs text-muted-foreground">
               {isRTL
                 ? "تصفّح المواضيع القانونية المنقّحة"
                 : "Browse curated legal topics"}
@@ -455,13 +456,13 @@ export default function KnowledgeLibrary({
 
         {/* Content */}
         <ScrollArea className="flex-1">
-          <div className="px-4 py-3 space-y-4">
+          <div className="px-5 py-4 space-y-5 animate-fade-in">
             {loading ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-10 w-full" />
+                  <div key={i} className="space-y-2.5">
+                    <Skeleton className="h-4 w-28 rounded-lg" />
+                    <Skeleton className="h-12 w-full rounded-xl" />
                   </div>
                 ))}
               </div>
@@ -473,19 +474,19 @@ export default function KnowledgeLibrary({
 
                 return (
                   <div key={area.slug}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="flex items-center justify-center h-6 w-6 rounded-md bg-primary/10 text-primary">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <span className="flex items-center justify-center h-7 w-7 rounded-xl bg-legal-indigo-muted text-legal-indigo">
                         {PRACTICE_ICONS[area.slug] || (
                           <BookOpen className="h-3.5 w-3.5" />
                         )}
                       </span>
-                      <h3 className="text-xs font-semibold">
+                      <h3 className="text-xs font-semibold text-primary">
                         {isRTL ? area.titleAr : area.titleEn}
                       </h3>
                       {area.topicCount > 0 && (
                         <Badge
                           variant="secondary"
-                          className="text-[10px] px-1.5 py-0"
+                          className="text-[10px] px-2 py-0 rounded-full bg-legal-indigo-muted/60 text-legal-indigo"
                         >
                           {area.topicCount}
                         </Badge>
@@ -493,14 +494,14 @@ export default function KnowledgeLibrary({
                     </div>
 
                     {areaTopics.length > 0 ? (
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         {areaTopics.map((topic) => (
                           <button
                             key={topic.id}
                             onClick={() => handleTopicClick(topic)}
-                            className="w-full flex items-center gap-2.5 rounded-lg border border-border px-3 py-2.5 text-start hover:bg-primary/5 hover:border-primary/30 transition-all duration-200 active:scale-[0.99]"
+                            className="topic-card w-full flex items-center gap-3 rounded-xl border border-border/50 px-3.5 py-3 text-start shadow-sm bg-legal-surface-elevated hover:shadow-md hover:border-border transition-all duration-200 active:scale-[0.99]"
                           >
-                            <span className="flex items-center justify-center h-7 w-7 rounded-md bg-primary/10 text-primary shrink-0">
+                            <span className="flex items-center justify-center h-8 w-8 rounded-xl bg-legal-indigo-muted text-legal-indigo shrink-0">
                               {PRACTICE_ICONS[area.slug] || (
                                 <BookOpen className="h-3.5 w-3.5" />
                               )}
@@ -513,9 +514,10 @@ export default function KnowledgeLibrary({
                             {topic.urgency && (
                               <Badge
                                 variant="secondary"
-                                className={`text-[9px] px-1.5 py-0 shrink-0 ${
+                                className={`text-[9px] px-1.5 py-0 rounded-full shrink-0 ${
                                   URGENCY_COLORS[topic.urgency] || ""
-                                }`}
+                                }`
+                              }
                               >
                                 {topic.urgency}
                               </Badge>
@@ -531,7 +533,7 @@ export default function KnowledgeLibrary({
                       </p>
                     )}
 
-                    <Separator className="mt-3" />
+                    <div className="mt-4 h-px bg-border/50" />
                   </div>
                 );
               })
@@ -540,8 +542,8 @@ export default function KnowledgeLibrary({
         </ScrollArea>
 
         {/* Footer stats */}
-        <div className="border-t border-border px-4 py-2 shrink-0">
-          <p className="text-[10px] text-muted-foreground text-center">
+        <div className="border-t border-border/50 px-5 py-2.5 shrink-0">
+          <p className="text-[10px] text-muted-foreground/70 text-center">
             {isRTL
               ? `${practiceAreas.length} مجالات ممارسة • ${topics.length} مواضيع منقّحة`
               : `${practiceAreas.length} practice areas • ${topics.length} curated topics`}

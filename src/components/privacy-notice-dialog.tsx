@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
   Shield,
   Database,
@@ -20,6 +20,7 @@ import {
   AlertCircle,
   FileText,
   Mail,
+  X,
 } from "lucide-react";
 
 /* ───────── Bilingual Privacy Content ───────── */
@@ -34,7 +35,7 @@ interface PrivacySection {
 
 const PRIVACY_SECTIONS: PrivacySection[] = [
   {
-    icon: <Database className="h-5 w-5" />,
+    icon: <Database className="h-4 w-4" />,
     titleAr: "ما هي البيانات التي نجمعها",
     titleEn: "What Data We Collect",
     contentAr: (
@@ -48,7 +49,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
           <li>المواضيع التي تتصفّحها واستعلامات البحث</li>
           <li>معلومات الجهاز والمتصفّح (عنوان IP، نوع المتصفح، الموقع التقريبي)</li>
         </ul>
-        <p className="text-muted-foreground text-xs mt-3 p-2 rounded bg-muted/50">
+        <p className="text-xs mt-3 p-3 rounded-lg bg-legal-surface text-muted-foreground">
           <strong>لا نطلب منك:</strong> الرقم الوطني، صور الهوية، أو تفاصيل حساسة
           عن العائلة أو الصحة. إذا شاركت مثل هذه البيانات طواعية، ننصحك بعدم
           فعل ذلك.
@@ -66,7 +67,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
           <li>Topics you browse and search queries</li>
           <li>Device and browser information (IP address, user agent, approximate location)</li>
         </ul>
-        <p className="text-muted-foreground text-xs mt-3 p-2 rounded bg-muted/50">
+        <p className="text-xs mt-3 p-3 rounded-lg bg-legal-surface text-muted-foreground">
           <strong>We do not require:</strong> National ID numbers, full ID scans, or
           sensitive family, health, or criminal details. If shared voluntarily, we advise
           against it.
@@ -75,7 +76,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <FileText className="h-5 w-5" />,
+    icon: <FileText className="h-4 w-4" />,
     titleAr: "لماذا نعالج بياناتك",
     titleEn: "Why We Process Your Data",
     contentAr: (
@@ -110,7 +111,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <Lock className="h-5 w-5" />,
+    icon: <Lock className="h-4 w-4" />,
     titleAr: "الأساس القانوني للمعالجة",
     titleEn: "Legal Basis for Processing",
     contentAr: (
@@ -120,15 +121,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         </p>
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>تنفيذ العقد:</strong> المعالجة اللازمة لتقديم المنصة وخدماتها</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>المصالح المشروعة:</strong> الأمان والتحليل وتحسين الخدمة</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>الموافقة:</strong> لمعالجة البيانات الحساسة أو التسويق عند الحاجة</span>
           </li>
         </ul>
@@ -144,15 +145,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         </p>
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Contract performance:</strong> Processing necessary to provide the Platform</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Legitimate interests:</strong> Security, analytics, and service improvement</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Consent:</strong> For sensitive data processing or marketing where required</span>
           </li>
         </ul>
@@ -163,7 +164,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <UserCheck className="h-5 w-5" />,
+    icon: <UserCheck className="h-4 w-4" />,
     titleAr: "من نشارك بياناتك معه",
     titleEn: "Who We Share Your Data With",
     contentAr: (
@@ -171,15 +172,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">قد نشارك بياناتك مع:</p>
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>مقدمو الخدمات:</strong> استضافة سحابية، بريد إلكتروني، تحليلات</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>المحامون:</strong> فقط إذا قدمت طلب اتصال (اسمك وتفاصيل الموضوع)</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>الجهات الرسمية:</strong> عند وجود طلب قانوني من المحاكم أو الجهات الرقابية</span>
           </li>
         </ul>
@@ -193,15 +194,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">We may share your data with:</p>
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Service providers:</strong> Cloud hosting, email, analytics</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Lawyers:</strong> Only if you submit a contact request</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Authorities:</strong> In response to lawful requests from courts or regulators</span>
           </li>
         </ul>
@@ -212,7 +213,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <Globe className="h-5 w-5" />,
+    icon: <Globe className="h-4 w-4" />,
     titleAr: "النقل الدولي للبيانات",
     titleEn: "International Data Transfers",
     contentAr: (
@@ -236,7 +237,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <Clock className="h-5 w-5" />,
+    icon: <Clock className="h-4 w-4" />,
     titleAr: "احتفاظ البيانات",
     titleEn: "Data Retention",
     contentAr: (
@@ -246,15 +247,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         </p>
         <ul className="space-y-1">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>بيانات الحساب:</strong> طوال فترة نشاط الحساب وفترة معقولة بعدها</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>بيانات الاستخدام:</strong> بشكل مجمع أو مجهول الهوية حيثما أمكن</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>سجلات الأمان:</strong> حسبما يتطلبه القانون</span>
           </li>
         </ul>
@@ -267,15 +268,15 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         </p>
         <ul className="space-y-1">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Account data:</strong> While your account is active and a reasonable period after</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Usage data:</strong> In aggregated or pseudonymized form where possible</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Security logs:</strong> As required by law</span>
           </li>
         </ul>
@@ -283,7 +284,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <Shield className="h-5 w-5" />,
+    icon: <Shield className="h-4 w-4" />,
     titleAr: "حقوقك بموجب قانون حماية البيانات",
     titleEn: "Your Rights Under the PDPL",
     contentAr: (
@@ -291,31 +292,31 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">وفقاً لقانون حماية البيانات الشخصية الأردني، لديك الحق في:</p>
         <ul className="space-y-1 mb-3">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>الوصول</strong> إلى بياناتك الشخصية المحفوظة لدينا</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>تصحيح</strong> البيانات غير الدقيقة أو الناقصة</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>طلب المسح</strong> في ظروف معينة</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>التقييد أو الاعتراض</strong> على أنشطة معالجة معينة</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>نقل البيانات</strong> حيثما ينطبق ذلك</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>سحب الموافقة</strong> في أي وقت</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>تقديم شكوى</strong> للجهة المعنية بحماية البيانات في الأردن</span>
           </li>
         </ul>
@@ -326,31 +327,31 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">Under Jordan's PDPL, you have the right to:</p>
         <ul className="space-y-1 mb-3">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Access</strong> your personal data held by us</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Correct</strong> inaccurate or incomplete data</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Request erasure</strong> in certain circumstances</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Restrict or object</strong> to certain processing</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Data portability</strong> where applicable</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Withdraw consent</strong> at any time</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span><strong>Lodge a complaint</strong> with the data protection authority</span>
           </li>
         </ul>
@@ -358,7 +359,7 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
     ),
   },
   {
-    icon: <AlertCircle className="h-5 w-5" />,
+    icon: <AlertCircle className="h-4 w-4" />,
     titleAr: "إجراءات الأمان",
     titleEn: "Security Measures",
     contentAr: (
@@ -366,19 +367,19 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">نتخذ إجراءات تقنية وتنظيمية لحماية بياناتك، بما في ذلك:</p>
         <ul className="space-y-1">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>تشفير البيانات أثناء النقل (HTTPS/TLS) وفي التخزين</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>ضوابط الوصول وصلاحيات مبنية على الأدوار</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>مراجعات أمنية دورية وإدارة الثغرات</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>إجراءات للكشف عن اختراقات البيانات وإخطارك حسب القانون</span>
           </li>
         </ul>
@@ -389,19 +390,19 @@ const PRIVACY_SECTIONS: PrivacySection[] = [
         <p className="mb-2">We implement technical and organizational security measures:</p>
         <ul className="space-y-1">
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>Encryption in transit (HTTPS/TLS) and at rest</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>Access controls and role-based permissions</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>Regular security reviews and vulnerability management</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="shrink-0 mt-1.5 h-1.5 w-1.5 rounded-full bg-legal-indigo" />
             <span>Breach detection and notification procedures per PDPL</span>
           </li>
         </ul>
@@ -426,64 +427,83 @@ export default function PrivacyNoticeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0">
-        {/* Header */}
-        <div className="flex items-center gap-3 border-b border-border px-6 py-4 shrink-0">
-          <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10 text-primary shrink-0">
-            <Shield className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <DialogTitle className="text-base font-bold leading-tight">
-              {isRTL
-                ? "إشعار الخصوصية"
-                : "Privacy Notice"}
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-              {isRTL
-                ? "متوافق مع قانون حماية البيانات الشخصية الأردني رقم 24 لسنة 2023"
-                : "Aligned with Jordan Personal Data Protection Law No. 24 of 2023"}
-            </DialogDescription>
-          </div>
-        </div>
+      <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl bg-legal-surface-elevated shadow-lg border-border/50 animate-slide-in-bottom">
+        {/* ── Gradient accent bar ── */}
+        <div className="h-[3px] w-full rounded-t-2xl bg-gradient-to-r from-[var(--legal-indigo)] to-[var(--legal-indigo-muted)]" />
 
-        {/* Scrollable content */}
+        {/* ── Header ── */}
+        <DialogHeader className="px-6 pt-5 pb-4 shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white shadow-sm shrink-0">
+                <Shield className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle className="text-foreground font-semibold text-base leading-tight">
+                  {isRTL
+                    ? "إشعار الخصوصية"
+                    : "Privacy Notice"}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  {isRTL
+                    ? "متوافق مع قانون حماية البيانات الشخصية الأردني رقم 24 لسنة 2023"
+                    : "Aligned with Jordan Personal Data Protection Law No. 24 of 2023"}
+                </DialogDescription>
+              </div>
+            </div>
+
+            {/* ── Minimal close button ── */}
+            <button
+              onClick={() => onOpenChange(false)}
+              className="flex items-center justify-center h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-legal-surface transition-colors duration-150"
+              aria-label={isRTL ? "إغلاق" : "Close"}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </DialogHeader>
+
+        {/* ── Scrollable content ── */}
         <ScrollArea className="flex-1 overflow-hidden">
-          <div className="px-6 py-4 space-y-5">
+          <div className="px-6 pb-5 space-y-4">
             {PRIVACY_SECTIONS.map((section, idx) => (
-              <div key={idx}>
+              <div
+                key={idx}
+                className="rounded-xl border border-border/50 bg-legal-surface p-5 shadow-sm animate-fade-in"
+              >
                 <div className="flex items-start gap-3">
-                  <span className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
-                    {section.icon}
-                  </span>
+                  {/* ── Section number badge with indigo gradient ── */}
+                  <Badge className="flex items-center justify-center h-7 w-7 rounded-lg bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white border-0 text-xs font-bold shadow-sm shrink-0 p-0">
+                    {idx + 1}
+                  </Badge>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-semibold mb-2 leading-tight">
+                    <h3 className="text-foreground font-semibold text-sm mb-2.5 leading-snug">
                       {isRTL ? section.titleAr : section.titleEn}
                     </h3>
-                    <div className="text-sm leading-relaxed text-foreground/80">
+                    <div className="prose-legal text-sm leading-relaxed text-foreground/80">
                       {isRTL ? section.contentAr : section.contentEn}
                     </div>
                   </div>
                 </div>
-                {idx < PRIVACY_SECTIONS.length - 1 && (
-                  <Separator className="mt-5" />
-                )}
               </div>
             ))}
 
-            {/* Contact / DPO section */}
-            <div className="rounded-xl border border-[var(--legal-teal-light)] bg-[var(--legal-teal-light)]/30 p-4">
+            {/* ── Contact / DPO section with amber accent ── */}
+            <div className="rounded-xl border border-legal-amber/20 bg-legal-amber-muted/30 p-5 shadow-sm animate-fade-in">
               <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-semibold mb-1">
+                <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-legal-amber/15 text-legal-amber shrink-0">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-foreground font-semibold text-sm mb-1.5">
                     {isRTL ? "الاتصال بنا" : "Contact Us"}
                   </h3>
-                  <p className="text-sm text-foreground/80">
+                  <p className="text-sm text-foreground/80 leading-relaxed">
                     {isRTL
                       ? "لأي أسئلة حول هذا الإشعار أو لممارسة حقوقك، تواصل معنا عبر:"
                       : "For questions about this notice or to exercise your rights, contact us at:"}
                   </p>
-                  <p className="text-sm font-medium mt-1.5">
+                  <p className="text-sm font-semibold mt-2 text-legal-amber">
                     privacy@example.jo
                   </p>
                 </div>
@@ -492,9 +512,9 @@ export default function PrivacyNoticeDialog({
           </div>
         </ScrollArea>
 
-        {/* Footer */}
-        <div className="border-t border-border px-6 py-3 shrink-0">
-          <p className="text-[11px] text-muted-foreground text-center">
+        {/* ── Footer ── */}
+        <div className="border-t border-border/50 px-6 py-3.5 shrink-0">
+          <p className="text-[11px] text-muted-foreground/70 text-center">
             {isRTL
               ? "آخر تحديث: 2026-08-16 — هذا إشعار مسوّدة ويجب مراجعته من مستشار قانوني مؤهّل"
               : "Last updated: 2026-08-16 — This is a draft notice and should be reviewed by qualified legal counsel"}
