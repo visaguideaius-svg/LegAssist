@@ -29,8 +29,10 @@ import {
   Globe,
   Loader2,
   ChevronUp,
+  Lock,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import PrivacyNoticeDialog from "@/components/privacy-notice-dialog";
 
 /* ───────── Types ───────── */
 interface Message {
@@ -121,6 +123,7 @@ export default function LegalChatPage() {
   const [language, setLanguage] = useState<"ar" | "en">("ar");
   const [isTyping, setIsTyping] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -274,6 +277,25 @@ export default function LegalChatPage() {
                 </TooltipTrigger>
                 <TooltipContent>
                   {isRTL ? "Switch to English" : "التبديل إلى العربية"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Privacy notice */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowPrivacy(true)}
+                    className="h-8 w-8"
+                  >
+                    <Lock className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isRTL ? "إشعار الخصوصية" : "Privacy Notice"}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -512,6 +534,12 @@ export default function LegalChatPage() {
           </div>
         </div>
       </main>
+      {/* Privacy Notice Dialog */}
+      <PrivacyNoticeDialog
+        open={showPrivacy}
+        onOpenChange={setShowPrivacy}
+        language={language}
+      />
     </div>
   );
 }
