@@ -14,7 +14,6 @@ import {
   Send,
   RotateCcw,
   AlertTriangle,
-  Sparkles,
   Briefcase,
   Home,
   Users,
@@ -305,7 +304,7 @@ export default function LegalChatPage() {
 
   /* ── Render ── */
   return (
-    <div className="h-screen flex flex-col bg-legal-surface noise-overlay">
+    <div className="h-screen flex flex-col bg-background">
       {/* ═══════════════════════════════════════════════════
           HEADER — Clean glass bar with warm tones
           ═══════════════════════════════════════════════════ */}
@@ -313,7 +312,7 @@ export default function LegalChatPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-[60px] flex items-center justify-between">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-[oklch(0.35_0.08_50)] to-[oklch(0.28_0.06_40)] text-white shadow-lg shadow-[oklch(0.28_0.06_40)/0.2]">
+            <div className="relative flex items-center justify-center h-10 w-10 rounded-xl bg-[#1e293b] text-white shadow-md">
               <Scale className="h-5 w-5" strokeWidth={2} />
             </div>
             <div className="hidden sm:block">
@@ -436,9 +435,9 @@ export default function LegalChatPage() {
               {/* Hero area */}
               <div className="text-center space-y-5 max-w-md">
                 {/* Large animated icon */}
-                <div className="mx-auto relative hero-glow">
-                  <div className="flex items-center justify-center h-[88px] w-[88px] rounded-3xl bg-gradient-to-br from-[oklch(0.40_0.08_50)/0.10] to-[oklch(0.65_0.14_45)/0.08] ring-1 ring-[oklch(0.40_0.08_50)/0.08] shadow-xl shadow-[oklch(0.40_0.08_50)/0.06]">
-                    <Sparkles className="h-10 w-10 text-[var(--legal-terracotta)]" strokeWidth={1.3} />
+                <div className="mx-auto">
+                  <div className="flex items-center justify-center h-20 w-20 rounded-2xl bg-[#f1f5f9] border border-[#e2e8f0]">
+                    <Scale className="h-10 w-10 text-[#1e293b]" strokeWidth={1.5} />
                   </div>
                 </div>
 
@@ -559,7 +558,7 @@ export default function LegalChatPage() {
                       type="button"
                       disabled={msg.visualizing}
                       onClick={() => handleVisualize(msg.id, msg.content)}
-                      className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[var(--legal-terracotta)] to-[oklch(0.55_0.12_50)] px-4 py-2.5 text-[13px] font-medium text-white shadow-sm shadow-[var(--legal-terracotta)]/15 transition-all duration-200 hover:shadow-lg hover:shadow-[var(--legal-terracotta)]/20 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 active:scale-[0.98]"
+                      className="inline-flex items-center gap-2.5 rounded-xl bg-[#c9a962] hover:bg-[#b8963f] px-4 py-2.5 text-[13px] font-medium text-white shadow-sm transition-all duration-200 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]"
                     >
                       {msg.visualizing ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -668,7 +667,7 @@ export default function LegalChatPage() {
               onClick={() => sendMessage()}
               disabled={!input.trim() || isLoading}
               size="sm"
-              className="shrink-0 rounded-xl h-10 w-10 p-0 bg-gradient-to-br from-[var(--legal-terracotta)] to-[oklch(0.50_0.10_50)] text-white shadow-md shadow-[var(--legal-terracotta)]/15 hover:shadow-lg hover:shadow-[var(--legal-terracotta)]/25 disabled:opacity-35 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+              className="shrink-0 rounded-xl h-10 w-10 p-0 bg-[#1e293b] hover:bg-[#0f172a] text-white shadow-sm hover:shadow-md disabled:opacity-35 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

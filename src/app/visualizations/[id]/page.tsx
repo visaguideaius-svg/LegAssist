@@ -54,8 +54,8 @@ export default function VisualizationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-legal-surface">
         <div className="flex flex-col items-center gap-4 animate-fade-in">
-          <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br from-[oklch(0.35_0.08_50)/0.10] to-[oklch(0.65_0.14_45)/0.06] ring-1 ring-[oklch(0.35_0.08_50)/0.08]">
-            <Scale className="h-6 w-6 text-[var(--legal-cedar)] animate-pulse" />
+          <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-[#f1f5f9] border border-[#e2e8f0]">
+            <Scale className="h-6 w-6 text-[#1e293b] animate-pulse" />
           </div>
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin text-[var(--legal-terracotta)]" />
@@ -98,7 +98,7 @@ export default function VisualizationPage() {
           </div>
           <button
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-[var(--legal-terracotta)] to-[oklch(0.50_0.10_50)] rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-[#c9a962] hover:bg-[#b8963f] rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
           >
             {data?.spec?.direction === "rtl" ? "العودة للمحادثة" : "Back to Chat"}
           </button>

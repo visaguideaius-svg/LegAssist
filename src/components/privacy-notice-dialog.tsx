@@ -435,7 +435,7 @@ export default function PrivacyNoticeDialog({
         <DialogHeader className="px-6 pt-5 pb-4 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white shadow-sm shrink-0">
+              <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-[#1e293b] text-white shadow-sm shrink-0">
                 <Shield className="h-5 w-5" />
               </div>
               <div className="min-w-0">
@@ -473,7 +473,7 @@ export default function PrivacyNoticeDialog({
               >
                 <div className="flex items-start gap-3">
                   {/* ── Section number badge with indigo gradient ── */}
-                  <Badge className="flex items-center justify-center h-7 w-7 rounded-lg bg-gradient-to-br from-[oklch(0.45_0.18_270)] to-[oklch(0.35_0.15_270)] text-white border-0 text-xs font-bold shadow-sm shrink-0 p-0">
+                  <Badge className="flex items-center justify-center h-7 w-7 rounded-lg bg-[#1e293b] text-white border-0 text-xs font-bold shadow-sm shrink-0 p-0">
                     {idx + 1}
                   </Badge>
                   <div className="min-w-0 flex-1">

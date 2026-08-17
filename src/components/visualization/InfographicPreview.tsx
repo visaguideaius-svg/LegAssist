@@ -173,7 +173,7 @@ export default function InfographicPreview({
             <button
               onClick={handleDownloadPNG}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-[var(--legal-terracotta)] to-[oklch(0.50_0.10_50)] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#c9a962] hover:bg-[#b8963f] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
             >
               {isDownloading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -187,7 +187,7 @@ export default function InfographicPreview({
             <button
               onClick={handleDownloadPDF}
               disabled={isDownloading}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-[oklch(0.35_0.08_50)] to-[oklch(0.30_0.06_40)] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#1e293b] hover:bg-[#0f172a] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
             >
               <FileDown className="h-4 w-4" />
               PDF
